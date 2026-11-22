@@ -110,6 +110,7 @@ section.s{padding-block:var(--sec)}
 .vcard .tc{position:absolute;right:12px;top:12px;font:600 .7rem Inter,sans-serif;letter-spacing:.08em;background:#000a;padding:.3rem .5rem;border-radius:4px;display:flex;gap:.4rem;align-items:center}
 .vcard .loading{position:absolute;inset:auto 0 0 0;padding:.6rem;font-size:.8rem;color:#fff;background:#000b;text-align:center}
 .vcard.playing .play,.vcard.playing .tc{display:none}
+.open-row{display:flex;gap:.5rem;flex-wrap:wrap}
 .open{margin-top:.6rem;align-self:flex-start;padding:.75rem 1.2rem;font-size:.92rem}
 .devices.dem{background:radial-gradient(120% 90% at 30% 20%,#3a2a1e,#141110 70%)}
 .devices.nai{background:radial-gradient(120% 90% at 70% 30%,#1d1640,#07070b 70%)}
@@ -436,7 +437,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
             <h3 data-i="nai_h">«Нуры AI» — бизнес онлайн, который работает за тебя</h3>
             <p data-i="nai_p">Сайт моего бренда в 3D: настоящая Земля с огнями Ашхабада, мальчик в тельпеке на туркменском ковре-самолёте, мозг из двух половинок, который сцепляется по кнопке. Всё можно трогать и крутить. Цены, бриф в Telegram, 3 языка.</p>
             <div class="tags"><span>Blender · Three.js</span><span>RU / TK / EN</span><span>Lighthouse 90+</span><span data-i="t_phone">телефон и ПК</span></div>
-            <a class="btn ghost open" href="кейсы/нуры-ai/" target="_blank" rel="noopener"><span data-i="open_site">Открыть сайт</span> ↗</a>
+            <div class="open-row"><a class="btn ghost open" href="кейсы/нуры-ai/" target="_blank" rel="noopener"><span data-i="open_site">Открыть сайт</span> ↗</a><a class="btn ghost open" href="video/nury-ai-tour.mp4" target="_blank" rel="noopener">▶ <span data-i="watch_tour">Видео-обзор</span></a></div>
           </div>
         </article>
 
@@ -725,6 +726,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
 <script>
 /* ============ ЯЗЫКИ. Туркменский перевод сделан Claude — попросить носителя языка проверить ============ */
 const I18N={
+ watch_tour:["Видео-обзор","Wideo-syn","Video tour"],
  nai_b:["Свой проект · 3D-сайт", "Öz taslamam · 3D saýt", "My own project · 3D website"],
  nai_h:["«Нуры AI» — бизнес онлайн, который работает за тебя", "«Nury AI» — siziň deregiňize işleýän onlaýn biznes", "«Nury AI» — an online business that works for you"],
  nai_p:["Сайт моего бренда в 3D: настоящая Земля с огнями Ашхабада, мальчик в тельпеке на туркменском ковре-самолёте, мозг из двух половинок, который сцепляется по кнопке. Всё можно трогать и крутить. Цены, бриф в Telegram, 3 языка.","Brendimiň 3D saýty: Aşgabadyň yşyklary bilen hakyky Ýer, türkmen halysynda uçýan telpekli oglan, düwme bilen birleşýän beýni. Hemmesini elläp we aýlap bolýar. Bahalar, Telegrama arza, 3 dil.","My brand’s 3D site: a real Earth with Ashgabat’s lights, a boy in a telpek on a flying Turkmen carpet, a brain whose halves click together. Everything can be touched and spun. Prices, a Telegram brief, 3 languages."],
