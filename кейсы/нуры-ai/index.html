@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="ru" class="boot">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Нуры AI — 3D-сайты, боты, ИИ-агенты и видео для бизнеса</title>
+  <meta name="description" content="Нуры AI: 3D-сайты, Telegram-боты, ИИ-агенты и видео для бизнеса под ключ. Бизнес онлайн, который работает за тебя." />
+  <meta name="theme-color" content="#050507" />
+  <meta property="og:title" content="Нуры AI — бизнес онлайн, который работает за тебя" />
+  <meta property="og:description" content="3D-сайты, Telegram-боты, ИИ-агенты и видео для бизнеса — под ключ." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="ru_RU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="og.jpg" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%237C5CFF'/%3E%3Cstop offset='1' stop-color='%2300D4FF'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='14' fill='%23050507'/%3E%3Ccircle cx='32' cy='32' r='14' fill='none' stroke='url(%23g)' stroke-width='5'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Manrope:wght@600;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" media="print" onload="this.media='all'" />
+  <script type="module" crossorigin src="./assets/index-DvN67uTt.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-Dq2RyDUj.css">
+</head>
+<body>
+  <canvas id="gl" aria-hidden="true"></canvas>
+  <div class="grain" aria-hidden="true"></div>
+
+  <div id="preloader" aria-hidden="true">
+    <span class="pl-label">НУРЫ AI</span>
+    <span class="pl-num"><b id="pl-count">0</b>%</span>
+    <span class="pl-carpet"><i id="pl-bar"></i><b class="pl-roll"></b></span>
+  </div>
+
+  <header class="top">
+    <a class="logo" href="#" aria-label="Нуры AI — наверх"><i></i><span>Нуры&nbsp;AI<small>3D · боты · видео</small></span></a>
+    <nav class="menu" aria-label="Меню"><span class="m-pill" aria-hidden="true"></span>
+      <button type="button" data-go="products">Продукты</button><button type="button" data-go="prices">Цены</button><button type="button" data-go="works">Работы</button><button type="button" data-go="contact">Контакт</button>
+    </nav>
+    <div class="top-r">
+      <button class="snd" type="button" aria-pressed="false" aria-label="Включить космический звук"><span class="bars"><i></i><i></i><i></i><i></i></span><span class="snd-t">Звук</span></button>
+      <a class="btn-sm" data-magnetic href="https://t.me/reix1" target="_blank" rel="noopener">Написать ↗</a>
+    </div>
+  </header>
+
+  <div class="node-tip" aria-hidden="true"><b></b><span>нажми — покажу примеры</span></div>
+  <div class="hint" aria-hidden="true"><span class="h-pc">Тяни Землю — крути · Тяни космос — брось галактику · Клик — звезда · Нажми на ковёр</span><span class="h-mob">Коснись — зажги звезду · Нажми на ковёр · Наклони телефон</span></div>
+
+  <!-- HUD «кабина корабля» -->
+  <div class="hud" aria-hidden="true">
+    <i class="cr tl"></i><i class="cr tr"></i><i class="cr bl"></i><i class="cr br"></i>
+    <div class="hud-l"><span>T° <b id="hud-t">−270.45</b>°C</span><span>X <b id="hud-x">0.000</b> Y <b id="hud-y">0.000</b></span><span>СКОРОСТЬ <b id="hud-v">0</b> КМ/С</span></div>
+    <div class="hud-r"><span>АШХАБАД <b id="hud-time">00:00</b></span><span>ЗВЁЗД ЗАЖЖЕНО <b id="hud-stars">0</b></span></div>
+  </div>
+  <button class="city" type="button" aria-label="Ашхабад"><i></i><span>Ашхабад</span><small>отсюда я работаю</small></button>
+  <!-- мозг: подписи половинок и мостик -->
+  <div class="hemi hemi-l" aria-hidden="true"><b>Сайт + видео</b><span>привлекают клиентов</span></div>
+  <div class="hemi hemi-r" aria-hidden="true"><b>Бот + ИИ-агент</b><span>отвечают и продают</span></div>
+  <button class="bridge-tip" type="button" aria-label="Соединить половинки мозга"><i></i><span>Соедини</span></button>
+  <div class="merged" aria-hidden="true"><b>Одна система</b><span>заявки 24/7 · без выходных</span></div>
+  <div class="guide" aria-hidden="true"></div>
+  <div class="thanks" aria-live="polite"></div>
+  <div class="hello" aria-hidden="true">Ассалам алейкум! 👋<small>Я Нуры. Полетели?</small></div>
+  <div class="snd-toast" role="dialog" aria-label="Звук космоса"><span>Включить звук космоса?</span><button type="button" data-yes>Да ▶</button><button type="button" data-no>Нет</button></div>
+
+  <nav class="progress" aria-hidden="true">
+    <span class="pr-line"><i id="pr-fill"></i></span>
+    <span class="pr-num"><b id="pr-cur">00</b> / 05</span>
+  </nav>
+
+  <main id="scroll">
+    <div class="overlay">
+
+      <section class="scene-text s0" data-scene="0">
+        <span class="label">00 / HERO</span>
+        <h1 class="split">Бизнес онлайн, который работает за <em class="grad">тебя</em></h1>
+        <p class="lead fade">3D-сайты, Telegram-боты, ИИ-агенты и видео для бизнеса — под ключ. Клиенты находят вас сами, а заявки приходят, пока вы заняты делом.</p>
+      </section>
+
+      <section class="scene-text s1" data-scene="1">
+        <span class="label">01 / ЯДРО</span>
+        <h2 class="split">Не просто сайт. Цифровой мозг вашего <em class="grad">бизнеса.</em></h2>
+        <p class="lead fade">Сайт привлекает, бот отвечает, ИИ-агент продаёт, видео приводит людей. Всё связано в одну систему и работает без выходных.</p>
+      </section>
+
+      <section class="scene-text s2" data-scene="2">
+        <span class="label">02 / ПРОДУКТЫ</span>
+        <h2 class="split h-sm">Три продукта. Одна <em class="grad">система.</em></h2>
+        <p class="tap-hint fade"><span class="h-pc">Наведи на шар или нажми карточку — откроются наши работы</span><span class="h-mob">Нажми карточку — откроются наши работы</span></p>
+        <div class="cards">
+          <article class="card fade" data-node="0">
+            <span class="c-num">01</span>
+            <h3>3D-сайты</h3>
+            <p>Сайт, который запоминают: 3D, анимация, заявка в один клик.</p>
+          </article>
+          <article class="card fade" data-node="1">
+            <span class="c-num">02</span>
+            <h3>Боты и ИИ-агенты</h3>
+            <p>Отвечают клиентам, принимают заказы и бронь, пока вы спите.</p>
+          </article>
+          <article class="card fade" data-node="2">
+            <span class="c-num">03</span>
+            <h3>Видео и Reels</h3>
+            <p>Ролики из ваших съёмок на телефон, которые приводят клиентов.</p>
+          </article>
+        </div>
+
+        <div class="ex" data-lenis-prevent>
+          <button class="ex-back" type="button">← Все продукты</button>
+
+          <div class="ex-pane" data-pane="0">
+            <h3>3D-сайты · наши работы</h3>
+            <div class="ex-sites">
+              <div class="ex-site"><img src="media/toy-pc.webp" alt="Сайт «Ak Çadyr» — шатры для тоя" loading="lazy" width="1440" height="900"><b>«Ak Çadyr» — шатры для тоя</b><small>3D-двор Ашхабада, осмотр изнутри, цена по гостям</small><a class="ex-go" data-case="../той/" target="_blank" rel="noopener">Открыть ↗</a></div>
+              <div class="ex-site"><img src="media/dem-pc.webp" alt="Сайт кофейни «Dem»" loading="lazy" width="1440" height="900"><b>Кофейня «Dem»</b><small>латте-арт с именем, карта зала, бронь</small><a class="ex-go" data-case="../кофейня-dem/" target="_blank" rel="noopener">Открыть ↗</a></div>
+              <div class="ex-site"><img src="media/bahar-pc.webp" alt="Сайт журналиста Бахар" loading="lazy" width="1440" height="900"><b>Сайт журналиста Бахар</b><small>3D-звезда, хроника, 3 языка</small><a class="ex-go" data-case="../../#works" target="_blank" rel="noopener">Открыть ↗</a></div>
+            </div>
+            <p class="ex-note">И этот сайт тоже — 20 000 частиц, которые можно потрогать.</p>
+          </div>
+
+          <div class="ex-pane" data-pane="1">
+            <h3>Наш демо-бот · нажимайте кнопки</h3>
+            <div class="chat">
+              <div class="chat-h"><i></i><div><b>Nury Demo Bot</b><small>бот · онлайн</small></div></div>
+              <div class="chat-b"></div>
+            </div>
+            <p class="ex-note">Настоящий бот: кафе, салон, курсы · русский и туркменский · каждая заявка сразу владельцу · 47 автотестов.</p>
+          </div>
+
+          <div class="ex-pane" data-pane="2">
+            <h3>Видео и Reels · наши ролики</h3>
+            <div class="ex-vids">
+              <figure class="v916"><video muted loop playsinline preload="none" poster="media/poster-reel-rain.jpg" src="media/reel-rain.mp4"></video><figcaption>Ашхабад после дождя<small>атмосфера для кафе и города</small></figcaption></figure>
+              <figure class="v916"><video muted loop playsinline preload="none" poster="media/poster-reel-perfume.jpg" src="media/reel-perfume.mp4"></video><figcaption>Реклама товара<small>товар крупно, цена — в директ</small></figcaption></figure>
+              <figure class="v169"><video muted loop playsinline preload="none" poster="media/poster-ahalteke-ru.jpg" src="media/t-ahalteke.mp4"></video><figcaption>Ахалтекинцы — 2D-мультик</figcaption></figure>
+              <figure class="v169"><video muted loop playsinline preload="none" poster="media/poster-korea.jpg" src="media/t-korea.mp4"></video><figcaption>История Кореи — видео-доклад</figcaption></figure>
+            </div>
+            <p class="ex-note">Нажмите на ролик — включится звук.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene-text s3" data-scene="3">
+        <span class="label">03 / ЦИФРЫ</span>
+        <div class="nums">
+          <div class="num fade"><b><span data-count="4">4</span></b><small>услуги под ключ</small></div>
+          <div class="num fade"><b><span data-count="24">24</span>/7</b><small>бот на связи с клиентами</small></div>
+          <div class="num fade"><b><i>от</i> <span data-count="48">48</span> ч</b><small>до запуска первого продукта</small></div>
+        </div>
+        <div class="feed fade" aria-label="Пример потока заявок"><span class="f-h"><i></i><b>Живой поток заявок</b><em>пример</em></span><ul></ul></div>
+        <div class="chart fade" aria-hidden="true"><span class="f-h"><b>Заявки за месяц</b><em>пример</em></span>
+          <svg viewBox="0 0 300 110" preserveAspectRatio="none"><defs><linearGradient id="cg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#00D4FF" stop-opacity=".45"/><stop offset="1" stop-color="#7C5CFF" stop-opacity="0"/></linearGradient></defs>
+          <path class="c-area" fill="url(#cg)"/><path class="c-line" fill="none" stroke="#00D4FF" stroke-width="2"/></svg>
+          <span class="c-total"><b>+0</b> <small>заявок</small></span></div>
+      </section>
+
+      <section class="scene-text s4" data-scene="4">
+        <span class="label">04 / ПОД КАПОТОМ</span>
+        <h2 class="split h-sm">Пара строк кода — и ваш бизнес в <em class="grad">сети.</em></h2>
+        <div class="s4-row">        <div class="term fade" role="img" aria-label="Терминал: запуск бизнеса онлайн">
+            <div class="term-bar"><i></i><i></i><i></i><span>nury-ai — zsh</span></div>
+            <pre id="term-code"></pre>
+          </div>
+          <div class="phone fade" aria-label="Телефон: так выглядит результат">
+            <div class="ph-notch"></div>
+            <div class="ph-screen" data-step="0">
+              <div class="ph-load">nury-ai…</div>
+              <div class="ph-app">
+                <div class="ph-top"><b>Dem</b><span>☕ кофейня</span></div>
+                <div class="ph-hero"><b>Кофе, который ждёт тебя</b><small>Ашхабад · 08:00–23:00</small></div>
+                <div class="ph-btns"><span>Меню</span><span>Бронь</span></div>
+                <div class="ph-chat"><p class="b">Здравствуйте! Чем помочь? ☕</p><p class="u">Столик на 4, 19:00</p><p class="b ai">ИИ: Забронировал ✅ Ждём вас!</p></div>
+              </div>
+              <div class="ph-toast">🔔 <b>Новая заявка</b><small>столик на 4 · 19:00</small></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene-text s5" data-scene="5">
+        <span class="label">05 / START</span>
+        <h2 class="split">Запусти свой бизнес онлайн под <em class="grad">ключ</em></h2>
+        <p class="constel fade" hidden></p>
+        <a class="btn fade" data-magnetic href="https://t.me/reix1" target="_blank" rel="noopener"><span>Написать в Telegram</span> ↗</a>
+      </section>
+
+    </div>
+  </main>
+
+  <div class="cursor" aria-hidden="true"><i class="c-dot"></i><i class="c-ring"></i></div>
+
+  <noscript><p style="padding:2rem;color:#ededed">Включите JavaScript, чтобы увидеть сайт. Связаться: <a href="https://t.me/reix1">t.me/reix1</a></p></noscript>
+</body>
+</html>

@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ak Çadyr — шатры для тоя и садака (концепт)</title>
+<meta name="description" content="Концепт сайта для аренды шатров на той: зайдите внутрь 3D-шатра, осмотритесь глазами гостя, настройте пакет и выберите свободную дату.">
+<!-- Концепт для портфолио Нуры (21.11.2026, v2). Название, цены и даты — пример, не реальный бизнес.
+     3D: js/tent-scene.js. Все библиотеки лежат локально в lib/ (Cloudflare в Туркменистане заблокирован).
+     Открывать через сервер (launch.json: toy-case), а не как файл. Старая версия — index-v1.html. -->
+<style>
+:root{--bg:#0d0a08;--ink:#f4ede2;--muted:#ab9f8f;--gold:#d6a85a;--card:rgba(20,15,12,.72);--line:rgba(244,237,226,.14);--mono:ui-monospace,"Cascadia Mono",Consolas,monospace;--serif:Georgia,"Times New Roman",serif;--ease:cubic-bezier(.16,1,.3,1)}
+*{box-sizing:border-box;margin:0}
+html,body{background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",sans-serif}
+button{font:inherit;color:inherit}
+.kick{font:600 11px/1 var(--mono);letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+#tour{position:relative;height:100vh;height:100svh;overflow:hidden;background:#05060a}
+#tour canvas{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none}
+#tour canvas.grab{cursor:grabbing}
+.top{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:center;padding:18px clamp(16px,4vw,48px);pointer-events:none;z-index:3}
+.brand{font:700 15px/1 var(--serif);letter-spacing:.3em}
+.brand b{color:var(--gold);font-weight:700}
+.concept{font:600 10px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;padding:7px 9px;border:1px solid var(--line);background:rgba(13,10,8,.5);backdrop-filter:blur(6px);color:var(--muted)}
+.hero{position:absolute;left:clamp(16px,4vw,48px);bottom:clamp(120px,22vh,200px);max-width:460px;z-index:3;transition:opacity .6s var(--ease),transform .8s var(--ease)}
+.hero::before{content:"";position:absolute;inset:-60px -80px -60px -200px;background:radial-gradient(closest-side,rgba(5,6,10,.78),rgba(5,6,10,0));z-index:-1;pointer-events:none}
+.hero.off{opacity:0;transform:translateY(16px);pointer-events:none}
+.hero h1{font:400 clamp(40px,6vw,76px)/.95 var(--serif);letter-spacing:-.02em;margin:14px 0 14px}
+.hero h1 em{color:var(--gold)}
+.hero p{color:#d8cfc2;max-width:380px}
+.btn{display:inline-flex;align-items:center;gap:10px;padding:15px 20px;background:var(--gold);color:#1b1209;border:0;cursor:pointer;font:700 12px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;text-decoration:none;transition:transform .2s cubic-bezier(.25,1,.5,1),filter .2s}
+.btn:hover{transform:translateY(-2px);filter:brightness(1.08)}
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.btn.ghost{background:rgba(13,10,8,.45);color:var(--ink);border:1px solid var(--line);backdrop-filter:blur(6px)}
+.hero .btn{margin-top:22px}
+.views{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);display:flex;gap:4px;padding:4px;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(10px);z-index:4;max-width:calc(100vw - 24px);overflow-x:auto;scrollbar-width:none}
+.views button{all:unset;cursor:pointer;white-space:nowrap;padding:10px 14px;font:600 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);transition:background .2s,color .2s}
+.views button[aria-pressed=true]{background:var(--gold);color:#1b1209}
+.views button:focus-visible{outline:2px solid var(--gold)}
+.hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:12px 16px;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(8px);font-size:14px;z-index:3;pointer-events:none;transition:opacity .5s;opacity:0}
+.hint.on{opacity:1}
+.hs{position:absolute;left:0;top:0;z-index:2;transform:translate(-50%,-50%)}
+.hs .dot{all:unset;cursor:pointer;display:block;width:22px;height:22px;border-radius:50%;background:rgba(214,168,90,.25);border:1.5px solid var(--gold);position:relative}
+.hs .dot::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--gold)}
+.hs .dot::before{content:"";position:absolute;inset:-6px;border-radius:50%;border:1px solid var(--gold);opacity:.6;animation:pulse 2.2s ease-out infinite}
+@keyframes pulse{0%{transform:scale(.7);opacity:.7}100%{transform:scale(1.6);opacity:0}}
+.hs .card{position:absolute;left:18px;top:-8px;width:230px;padding:12px 14px;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(10px);opacity:0;transform:translateY(4px);pointer-events:none;transition:opacity .25s,transform .3s var(--ease)}
+.hs.open .card,.hs .dot:hover+.card{opacity:1;transform:none}
+.hs .card b{display:block;font-size:15px;margin-bottom:4px}
+.hs .card p{font-size:13px;color:#d8cfc2;line-height:1.45}
+.hs .card i{display:inline-block;margin-top:8px;font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-style:normal}
+.panel{position:absolute;right:clamp(12px,2.5vw,32px);top:70px;width:330px;max-height:calc(100% - 150px);overflow:auto;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(14px);padding:20px;z-index:4;transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.panel.off{opacity:0;transform:translateX(20px);pointer-events:none}
+.panel h2{font:400 22px/1.1 var(--serif);margin:6px 0 12px}
+.field{margin-bottom:14px}
+.field .lbl{display:flex;justify-content:space-between;align-items:baseline;font:600 10px/1 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.field .lbl b{font:700 20px/1 system-ui,sans-serif;color:var(--ink);letter-spacing:-.02em;text-transform:none}
+input[type=range]{width:100%;accent-color:var(--gold);height:26px}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.seg3{grid-template-columns:1fr 1fr 1.3fr}.seg3 .opt{padding:9px 6px;text-align:center}.seg3 .opt b{font-size:13px}
+.evnote{font-size:12px;color:var(--muted);margin-top:8px;line-height:1.35}
+.opt{all:unset;cursor:pointer;border:1px solid var(--line);padding:10px;transition:border-color .2s,background .2s}
+.opt b{display:block;font-size:14px}.opt small{display:block;font-size:12px;color:var(--muted);line-height:1.3;margin-top:3px}
+.opt[aria-pressed=true]{border-color:var(--gold);background:rgba(214,168,90,.1)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{all:unset;cursor:pointer;border:1px solid var(--line);padding:8px 10px;font-size:13px;transition:all .2s}
+.chip span{color:var(--muted);font:11px var(--mono);margin-left:4px}
+.chip[aria-pressed=true]{border-color:var(--gold);color:var(--gold)}
+.opt:focus-visible,.chip:focus-visible{outline:2px solid var(--gold)}
+.price{border-top:1px solid var(--line);padding-top:14px;margin-top:4px}
+.price .big{font:700 34px/1 system-ui,sans-serif;letter-spacing:-.03em;font-variant-numeric:tabular-nums;margin:8px 0 4px}
+.price .big small{font-size:14px;color:var(--muted);margin-left:4px}
+.price .row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.price .row span:last-child{color:var(--ink);font-family:var(--mono)}
+.note{font-size:11px;color:var(--muted);margin-top:10px}
+.panel .btn{width:100%;justify-content:center;margin-top:14px}
+.toggleP{position:absolute;right:clamp(12px,2.5vw,32px);top:70px;z-index:5;padding:10px 14px}
+.toggleP.hide{display:none}
+.panel{top:118px}
+.panel.closed{opacity:0;transform:translateX(20px);pointer-events:none}
+.loader{position:absolute;inset:0;display:grid;place-items:center;background:#05060a;z-index:10;transition:opacity .8s}
+.loader.done{opacity:0;pointer-events:none}
+.loader div{text-align:center}.loader b{display:block;font:400 28px var(--serif);letter-spacing:.3em;margin-bottom:10px}
+section.block{padding:clamp(64px,9vw,110px) clamp(16px,5vw,64px);border-top:1px solid var(--line)}
+.wrap{max-width:1180px;margin:0 auto}
+.block h2{font:400 clamp(32px,4.5vw,54px)/1 var(--serif);margin:12px 0 12px}
+.block h2 em{color:var(--gold)}
+.lead{color:var(--muted);max-width:560px;margin-bottom:30px}
+.grid2{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:24px;align-items:start}
+.card2{background:#17120f;border:1px solid var(--line);padding:clamp(18px,3vw,28px)}
+.cal-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.cal-head b{font-size:18px;text-transform:capitalize}
+.nav{all:unset;cursor:pointer;width:38px;height:38px;display:grid;place-items:center;border:1px solid var(--line)}
+.nav:disabled{opacity:.3;cursor:default}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.dow{font:600 10px/1 var(--mono);letter-spacing:.1em;color:var(--muted);text-align:center;padding:6px 0}
+.day{all:unset;cursor:pointer;aspect-ratio:1;display:grid;place-items:center;border:1px solid var(--line);font-variant-numeric:tabular-nums;transition:all .2s}
+.day.busy{color:rgba(244,237,226,.28);cursor:not-allowed;background:repeating-linear-gradient(135deg,transparent 0 6px,rgba(244,237,226,.05) 6px 7px)}
+.day.past{opacity:.2;cursor:default}.day.free:hover{border-color:var(--gold)}
+.day.sel{background:var(--gold);color:#1b1209;border-color:var(--gold);font-weight:700}
+.day:focus-visible{outline:2px solid var(--gold)}
+.legend{display:flex;gap:16px;margin-top:14px;font-size:13px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border:1px solid var(--line);vertical-align:-1px;margin-right:6px}
+.legend .f{border-color:var(--gold)}.legend .b{background:repeating-linear-gradient(135deg,transparent 0 3px,rgba(244,237,226,.2) 3px 4px)}
+.form{display:grid;gap:12px;margin-top:16px}
+.form input{width:100%;background:transparent;border:1px solid var(--line);color:var(--ink);padding:14px;font:inherit}
+.form input:focus{outline:none;border-color:var(--gold)}
+.sum{font:13px/1.8 var(--mono);color:var(--muted);border-left:2px solid var(--gold);padding-left:14px;white-space:pre-line}
+.sum b{color:var(--ink)}
+.btns{display:flex;flex-wrap:wrap;gap:10px}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:#1b1209;padding:12px 16px;font-size:14px;opacity:0;transition:all .3s var(--ease);z-index:30;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+footer{padding:36px clamp(16px,5vw,64px) 56px;border-top:1px solid var(--line);color:var(--muted);font-size:13px}
+@media (max-width:860px){.grid2{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .hero{bottom:150px;right:16px}.hero h1{font-size:44px}
+  .panel{left:10px;right:10px;width:auto;top:auto;bottom:122px;max-height:58%}
+  .panel.closed{transform:translateY(calc(100% + 80px));opacity:0;pointer-events:none}
+  .toggleP{top:auto;right:12px;bottom:72px}
+  .hs .card{width:190px;left:-95px;top:20px}
+  .views{bottom:12px}.views button{padding:9px 10px;font-size:10px}
+}
+@media (prefers-reduced-motion:reduce){.hs .dot::before{animation:none}}
+</style>
+</head>
+<body>
+<section id="tour" aria-label="3D-шатёр: осмотр изнутри">
+  <canvas id="c" aria-label="Шатёр. Тяните, чтобы осмотреться"></canvas>
+  <div id="hs"></div>
+  <div class="top"><div class="brand">AK <b>ÇADYR</b></div><div class="concept" title="Концепт для портфолио: название, цены и даты — пример">Концепт</div></div>
+  <div class="hero" id="hero"><div class="kick">Шатры для тоя и садака · Ашхабад</div><h1>Ваш той — <em>под белым шатром</em></h1><p>Три шатра прямо во дворе: за длинными столами, на полу у сачака и на деревянных топчанах. Ковры, плов на каждом столе. Зайдите внутрь и посмотрите глазами гостя.</p><button class="btn" id="enter">Войти внутрь →</button></div>
+  <div class="hint" id="hint">Тяните, чтобы осмотреться · колесо — приблизить</div>
+  <aside class="panel off" id="panel" aria-label="Настройка тоя">
+    <div class="kick">Настройте той</div><h2>Меняйте — шатёр меняется</h2>
+    <div class="field"><div class="lbl">Событие</div><div class="seg seg3" id="event"><button class="opt" data-v="toy" aria-pressed="true" title="Свадьба: сцена, стол молодых, музыка"><b>Той</b></button><button class="opt" data-v="sadaka" aria-pressed="false" title="Худайёлы: дограма, скромно, без сцены"><b>Садака</b></button><button class="opt" data-v="gelin" aria-pressed="false" title="Невесту привозят из дома родителей: дорожка и арка у входа"><b>Гелин алыжы</b></button></div><p class="evnote" id="evnote">Свадьба: сцена, стол молодых, музыка</p></div>
+    <div class="field"><div class="lbl">Гостей <b id="gOut">300</b></div><input id="guests" type="range" min="100" max="600" step="10" value="300" aria-label="Число гостей"></div>
+    <div class="field"><div class="lbl">Пакет</div><div class="seg" id="pack">
+      <button class="opt" data-v="0" aria-pressed="true"><b>Стандарт</b><small>Бордовые чехлы, светильники, гирлянды</small></button>
+      <button class="opt" data-v="1" aria-pressed="false"><b>Премиум</b><small>Белые чехлы с золотом, хрустальные люстры</small></button></div></div>
+    <div class="field"><div class="lbl">Дополнительно</div><div class="chips" id="extras">
+      <button class="chip" data-k="stage" data-p="3000" aria-pressed="true">Сцена с аркой<span>+3 000</span></button>
+      <button class="chip" data-k="led" data-p="6000" aria-pressed="false">LED-экраны<span>+6 000</span></button>
+      <button class="chip" data-k="aisle" data-p="1500" aria-pressed="false">Дорожка и цветы<span>+1 500</span></button>
+      <button class="chip" data-k="ac" data-p="5000" aria-pressed="false">Кондиционеры<span>+5 000</span></button></div></div>
+    <div class="price" aria-live="polite"><div class="kick">Примерная стоимость</div><div class="big"><span id="total">0</span><small>TMT</small></div>
+      <div class="row"><span>Три шатра</span><span id="size">—</span></div><div class="row"><span>Места</span><span id="tables">—</span></div><div class="row"><span>На гостя</span><span id="per">—</span></div></div>
+    <a class="btn" href="#date">Выбрать дату →</a>
+    <p class="note">Цены в концепте — пример. В настоящем проекте — цены владельца.</p>
+  </aside>
+  <button class="btn ghost toggleP hide" id="toggleP">Настроить той</button>
+  <nav class="views" id="views" aria-label="Куда смотреть">
+    <button data-v="outside" aria-pressed="true">Снаружи</button><button data-v="entrance">Вход</button><button data-v="center">Центр зала</button><button data-v="head">Стол молодых</button><button data-v="guest">Место гостя</button><button data-v="floor">Зал на полу</button><button data-v="floorSeat">Место на полу</button><button data-v="topchan">Зал с топчанами</button><button data-v="topchanSeat">На топчане</button><button data-v="roof">Купол</button>
+  </nav>
+  <div class="loader" id="loader"><div><b>AK ÇADYR</b><span class="kick">Ставим шатёр…</span></div></div>
+</section>
+
+<section class="block" id="date"><div class="wrap">
+  <div class="kick">Свободные даты</div>
+  <h2>Выберите <em>день тоя</em></h2>
+  <p class="lead">Занятые дни видно сразу. Не нужно звонить и спрашивать, свободна ли суббота.</p>
+  <div class="grid2">
+    <div class="card2"><div class="cal-head"><button class="nav" id="prev" aria-label="Предыдущий месяц">←</button><b id="month"></b><button class="nav" id="next" aria-label="Следующий месяц">→</button></div>
+      <div class="cal" id="cal"></div><div class="legend"><span><i class="f"></i>свободно</span><span><i class="b"></i>занято</span></div></div>
+    <div class="card2"><div class="kick">Заявка</div><h3 style="font:400 26px var(--serif);margin:10px 0 14px">Ваш той</h3><div class="sum" id="sum"></div>
+      <div class="form"><input id="name" autocomplete="name" placeholder="Ваше имя" aria-label="Ваше имя"><input id="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+993 6_ __ __ __" aria-label="Телефон">
+        <div class="btns"><button class="btn" id="send">Отправить заявку →</button><button class="btn ghost" id="call">Позвонить</button></div></div></div>
+  </div>
+</div></section>
+<footer><div class="wrap">Ak Çadyr — концепт сайта для портфолио. Внешний вид шатров и стола — по фото настоящих тоев в Ашхабаде. Название, цены и занятые даты придуманы для примера. Все файлы лежат на самом сайте, поэтому он открывается в Туркменистане без VPN.</div></footer>
+<div class="toast" id="toast" role="status"></div>
+
+<script src="lib/three.min.js"></script>
+<script src="lib/RoomEnvironment.js"></script>
+<script src="lib/CopyShader.js"></script>
+<script src="lib/LuminosityHighPassShader.js"></script>
+<script src="lib/GammaCorrectionShader.js"></script>
+<script src="lib/EffectComposer.js"></script>
+<script src="lib/RenderPass.js"></script>
+<script src="lib/ShaderPass.js"></script>
+<script src="lib/UnrealBloomPass.js"></script>
+<script src="js/tent-scene.js"></script>
+<script>
+const $ = (s) => document.querySelector(s), fmt = (n) => Math.round(n).toLocaleString('ru-RU').replace(/,/g, ' ');
+const st = { guests: 300, premium: false, event: 'toy', stage: true, led: false, aisle: false, ac: false, date: null };
+const PRICES = { stage: 3000, led: 6000, aisle: 1500, ac: 5000 };
+const basePrice = (g) => g <= 150 ? 30000 : g <= 300 ? 38000 : g <= 450 ? 48000 : 60000;
+let hinted = false, scene3d = null;
+try { scene3d = ToyScene.init($('#c'), st); } catch (e) { console.error(e); $('#loader').innerHTML = '<div><b>AK ÇADYR</b><span class="kick">3D не запустился на этом устройстве</span></div>'; }
+if (scene3d) {
+  setTimeout(() => $('#loader').classList.add('done'), 300);
+  scene3d.onView = (v) => { document.querySelectorAll('#views button').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === v)); const inside = v !== 'outside';
+    $('#hero').classList.toggle('off', inside); $('#panel').classList.toggle('off', !inside); $('#toggleP').classList.toggle('hide', !inside);
+    if (inside && !hinted) { hinted = true; $('#hint').classList.add('on'); setTimeout(() => $('#hint').classList.remove('on'), 3200); } };
+  scene3d.onInteract = () => $('#hint').classList.remove('on');
+  const hsBox = $('#hs'), hsEls = {};
+  scene3d.onHotspots = (list) => { const seen = new Set(); list.forEach(h => { seen.add(h.id); let el = hsEls[h.id];
+      if (!el) { el = document.createElement('div'); el.className = 'hs'; el.innerHTML = '<button class="dot" aria-label=""></button><div class="card"><b></b><p></p><i></i></div>'; el.querySelector('.dot').onclick = (e) => { e.stopPropagation(); el.classList.toggle('open'); Object.values(hsEls).forEach(x => x !== el && x.classList.remove('open')); }; hsBox.appendChild(el); hsEls[h.id] = el; }
+      el.querySelector('b').textContent = h.t; el.querySelector('p').textContent = h.d; el.querySelector('i').textContent = h.tag === 'входит' ? 'входит в цену' : h.tag; el.querySelector('.dot').setAttribute('aria-label', h.t);
+      el.style.display = h.vis ? '' : 'none'; el.style.left = h.x + 'px'; el.style.top = h.y + 'px'; });
+    Object.keys(hsEls).forEach(k => { if (!seen.has(k)) hsEls[k].style.display = 'none'; }); };
+  document.querySelectorAll('#views button').forEach(b => b.onclick = () => scene3d.go(b.dataset.v));
+  $('#enter').onclick = () => scene3d.go('entrance');
+  scene3d.onView('outside');
+}
+$('#toggleP').onclick = () => { const c = $('#panel').classList.toggle('closed'); $('#toggleP').textContent = c ? 'Настроить той' : 'Скрыть панель'; };
+if (matchMedia('(max-width:760px)').matches) $('#panel').classList.add('closed'); else $('#toggleP').textContent = 'Скрыть панель';
+function price() { const b = basePrice(st.guests) * (st.premium ? 1.25 : 1), e = Object.keys(PRICES).reduce((a, k) => a + (st[k] ? PRICES[k] : 0), 0); return b + e; }
+function ui() { const d = ToyScene.tierFor(st.guests), t = price(); $('#gOut').textContent = st.guests; $('#total').textContent = fmt(t); const [d1, d2, d3] = ToyScene.split(st.guests); $('#size').textContent = [d1, d2, d3].map(d => `${d.A * 2}×${d.B * 2}`).join(' + ') + ' м'; $('#tables').textContent = `${Math.ceil(d1.guests / 20)} столов · ${Math.ceil(d2.guests / 20)} сачаков · ${Math.ceil(d3.guests / 8)} топчанов`; $('#per').textContent = fmt(t / st.guests) + ' TMT'; summary(); }
+let deb; const push = (now) => { clearTimeout(deb); const run = () => scene3d && scene3d.setState({ guests: st.guests, premium: st.premium, event: st.event, stage: st.stage, led: st.led, aisle: st.aisle, ac: st.ac }); now ? run() : (deb = setTimeout(run, 280)); };
+$('#guests').addEventListener('input', (e) => { st.guests = +e.target.value; ui(); push(false); });
+document.querySelectorAll('#event .opt').forEach(b => b.onclick = () => { document.querySelectorAll('#event .opt').forEach(o => o.setAttribute('aria-pressed', o === b)); st.event = b.dataset.v; $('#evnote').textContent = b.title; document.querySelectorAll('#extras [data-k=stage],#extras [data-k=led]').forEach(c => { c.disabled = st.event === 'sadaka'; c.style.opacity = st.event === 'sadaka' ? .35 : 1; }); if (st.event === 'sadaka') { st.stage = false; st.led = false; document.querySelectorAll('#extras [data-k=stage],#extras [data-k=led]').forEach(c => c.setAttribute('aria-pressed', false)); } ui(); push(true); });
+document.querySelectorAll('#pack .opt').forEach(b => b.onclick = () => { document.querySelectorAll('#event .opt').forEach(b => b.onclick = () => { document.querySelectorAll('#event .opt').forEach(o => o.setAttribute('aria-pressed', o === b)); st.event = b.dataset.v; document.querySelectorAll('#extras [data-k=stage],#extras [data-k=led]').forEach(c => { c.disabled = st.event === 'sadaka'; c.style.opacity = st.event === 'sadaka' ? .35 : 1; }); if (st.event === 'sadaka') { st.stage = false; st.led = false; document.querySelectorAll('#extras [data-k=stage],#extras [data-k=led]').forEach(c => c.setAttribute('aria-pressed', false)); } ui(); push(true); });
+document.querySelectorAll('#pack .opt').forEach(o => o.setAttribute('aria-pressed', o === b)); st.premium = b.dataset.v === '1'; ui(); push(true); });
+document.querySelectorAll('#extras .chip').forEach(b => b.onclick = () => { const on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); st[b.dataset.k] = on; ui(); push(true); });
+const today = new Date(); today.setHours(0, 0, 0, 0); let view = new Date(today.getFullYear(), today.getMonth(), 1);
+const busy = (d) => { const dow = d.getDay(), s = (d.getDate() * 7 + d.getMonth() * 13) % 10; return (dow === 6 || dow === 0) ? s < 7 : dow === 5 ? s < 4 : s < 1; };
+function drawCal() { const cal = $('#cal'); cal.innerHTML = ''; $('#month').textContent = view.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+  ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'].forEach(d => { const s = document.createElement('div'); s.className = 'dow'; s.textContent = d; cal.appendChild(s); });
+  const first = (view.getDay() + 6) % 7, days = new Date(view.getFullYear(), view.getMonth() + 1, 0).getDate(); for (let i = 0; i < first; i++) cal.appendChild(document.createElement('span'));
+  for (let n = 1; n <= days; n++) { const d = new Date(view.getFullYear(), view.getMonth(), n), b = document.createElement('button'); b.className = 'day'; b.textContent = n;
+    if (d < today) { b.classList.add('past'); b.disabled = true; } else if (busy(d)) { b.classList.add('busy'); b.setAttribute('aria-disabled', 'true'); b.onclick = () => toast('Этот день уже занят. Выберите свободный.'); } else { b.classList.add('free'); b.onclick = () => { st.date = d; drawCal(); summary(); }; }
+    if (st.date && d.getTime() === st.date.getTime()) b.classList.add('sel'); b.setAttribute('aria-label', d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' }) + (b.classList.contains('busy') ? ', занято' : '')); cal.appendChild(b); }
+  $('#prev').disabled = view <= new Date(today.getFullYear(), today.getMonth(), 1); }
+$('#prev').onclick = () => { view = new Date(view.getFullYear(), view.getMonth() - 1, 1); drawCal(); };
+$('#next').onclick = () => { view = new Date(view.getFullYear(), view.getMonth() + 1, 1); drawCal(); };
+function summary() { const d = ToyScene.tierFor(st.guests), ex = Object.keys(PRICES).filter(k => st[k]).map(k => ({ stage: 'сцена', led: 'экраны', aisle: 'дорожка', ac: 'кондиционеры' })[k]);
+  $('#sum').innerHTML = `Дата: <b>${st.date ? st.date.toLocaleDateString('ru-RU', { weekday: 'long', day: 'numeric', month: 'long' }) : 'не выбрана'}</b>\nГостей: <b>${st.guests}</b> · три шатра: за столами, на полу и на топчанах\nСобытие: <b>${({ toy: 'Той', sadaka: 'Садака', gelin: 'Гелин алыжы' })[st.event]}</b> · пакет <b>${st.premium ? 'Премиум' : 'Стандарт'}</b>${ex.length ? ' + ' + ex.join(', ') : ''}\nПримерно: <b>${fmt(price())} TMT</b>`; }
+let tt; function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('on'); clearTimeout(tt); tt = setTimeout(() => el.classList.remove('on'), 3400); }
+$('#send').onclick = () => { if (!st.date) { toast('Сначала выберите свободную дату в календаре.'); return; } if ($('#phone').value.replace(/\D/g, '').length < 8) { toast('Укажите телефон, чтобы мы перезвонили.'); $('#phone').focus(); return; } toast('Концепт: здесь заявка уходит владельцу, а гостю приходит SMS-подтверждение.'); };
+$('#call').onclick = () => toast('Концепт: здесь будет номер владельца шатров, кнопка сразу набирает его.');
+ui(); drawCal();
+</script>
+</body>
+</html>

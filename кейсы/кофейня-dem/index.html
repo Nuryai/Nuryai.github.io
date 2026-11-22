@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dem — кофейня в Ашхабаде · концепт</title>
+<meta name="description" content="Концепт-сайт кофейни Dem: латте-арт с вашим именем, конструктор напитка и 3D-карта зала с бронью столика. Сделано Nury.">
+<meta name="theme-color" content="#F8F4EF">
+<link rel="icon" href="favicon.png">
+<meta property="og:title" content="Dem — кофейня в Ашхабаде · концепт">
+<meta property="og:description" content="Латте-арт с вашим именем, свой напиток и бронь столика. Концепт-сайт от Nury.">
+<meta property="og:image" content="og.jpg">
+
+<link href="assets/fonts-56ec0131.css" rel="stylesheet">
+<style>
+/* нежная палитра: молоко, карамель, шалфей */
+:root{--bg:#F8F4EF;--bg2:#F2EBE3;--card:#FFFFFF;--ink:#4A3B33;--muted:#8B7B70;--line:#EAE0D5;--acc:#C08A63;--acc2:#AD774F;--sage:#9DB89A;--soft:#F3E7DA;--ease:cubic-bezier(.16,1,.3,1)}
+*{box-sizing:border-box;margin:0;padding:0}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{background:var(--bg);color:var(--ink);font:400 clamp(1rem,.95rem + .2vw,1.1rem)/1.65 Manrope,system-ui,sans-serif;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit}button,input{font:inherit;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(1rem,4vw,2rem)}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;font-weight:700;letter-spacing:-.01em;color:var(--ink)}
+h1{font-size:clamp(2.3rem,1.2rem + 4vw,4.4rem);line-height:1.04}
+h2{font-size:clamp(1.9rem,1.1rem + 2.5vw,3rem);line-height:1.1}
+h1 i,h2 i{font-style:italic;font-weight:600;color:var(--acc)}
+p{color:var(--muted);max-width:60ch}
+.btn{display:inline-flex;align-items:center;gap:.5rem;padding:.9rem 1.45rem;border-radius:99px;background:var(--acc);color:#fff;border:0;text-decoration:none;font-weight:800;cursor:pointer;transition:transform .25s var(--ease),background .25s,box-shadow .25s;box-shadow:0 6px 18px #c08a6333}
+.btn:hover{transform:translateY(-2px);background:var(--acc2)}
+.btn.ghost{background:transparent;border:1.5px solid #cdbcad;color:var(--ink);box-shadow:none}
+.btn.ghost:hover{border-color:var(--acc);color:var(--acc2)}
+:focus-visible{outline:3px solid #e2bfa3;outline-offset:3px}
+.concept{background:var(--soft);color:var(--muted);font-size:.8rem;text-align:center;padding:.45rem 1rem}
+.concept a{color:var(--acc2);font-weight:800}
+.top{position:sticky;top:0;z-index:20;background:#F8F4EFe8;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:62px}
+.logo{font:700 1.7rem/1 "Playfair Display",serif;text-decoration:none;display:flex;align-items:baseline;gap:.35rem}
+.logo small{font:600 .7rem Manrope;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.nav{display:flex;gap:1.4rem;font-weight:600;font-size:.95rem}
+.nav a{text-decoration:none;color:var(--muted)}.nav a:hover{color:var(--acc2)}
+.lang{display:flex;border:1.5px solid var(--line);border-radius:99px;overflow:hidden;background:#fff}
+.lang button{background:none;border:0;padding:.35rem .75rem;font-weight:800;font-size:.78rem;cursor:pointer;color:var(--muted)}
+.lang button[aria-pressed=true]{background:var(--acc);color:#fff}
+section{padding-block:clamp(4rem,3rem + 5vw,7.5rem)}
+.kick{font-weight:800;font-size:.76rem;letter-spacing:.18em;text-transform:uppercase;color:var(--acc);display:block;margin-bottom:.9rem}
+.head{display:flex;justify-content:space-between;align-items:end;gap:1.5rem;flex-wrap:wrap;margin-bottom:2rem}
+
+/* первый экран */
+.hero{padding-top:clamp(2rem,1rem + 3vw,4rem)}
+.hgrid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(1.5rem,4vw,4rem);align-items:center}
+.hero p.lead{margin:1.3rem 0 1.8rem;font-size:1.1rem}
+.facts{display:flex;gap:1.8rem;margin-top:2.2rem;flex-wrap:wrap}
+.facts b{display:block;font:700 1.55rem "Playfair Display",serif}
+.facts span{font-size:.85rem;color:var(--muted)}
+.cup{position:relative;height:min(60vh,540px);border-radius:28px;background:radial-gradient(70% 60% at 50% 42%,#FFFDF9,#F6EEE5 70%,#EFE5DA);overflow:hidden;border:1px solid var(--line)}
+.cup canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:pan-y}
+.cup .tag{position:absolute;left:1rem;top:1rem;background:#fff;border:1px solid var(--line);border-radius:99px;padding:.35rem .8rem;font-size:.78rem;font-weight:800;color:var(--muted)}
+.cup .step{position:absolute;left:50%;bottom:1rem;transform:translateX(-50%);background:#ffffffe6;border-radius:99px;padding:.4rem .9rem;font-size:.85rem;font-weight:700;color:var(--acc2);white-space:nowrap;transition:opacity .3s}
+.art{display:flex;gap:.5rem;margin-top:1rem;flex-wrap:wrap}
+.art input{flex:1 1 180px;min-width:0;border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:.8rem 1.1rem;font-weight:600}
+.art input:focus{outline:none;border-color:var(--acc)}
+.chips{display:flex;gap:.4rem;margin-top:.7rem;flex-wrap:wrap;align-items:center}
+.chips small{color:var(--muted);font-weight:700;margin-right:.2rem}
+.chips button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:.35rem .85rem;font-size:.86rem;font-weight:700;cursor:pointer;color:var(--ink)}
+.chips button:hover{border-color:var(--acc);color:var(--acc2)}
+.cupfb{display:grid;place-items:center;height:100%;font:700 3rem "Playfair Display";color:var(--acc)}
+
+/* меню */
+.tabs{display:flex;gap:.4rem;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:.5rem 1rem;font-weight:800;font-size:.9rem;cursor:pointer;color:var(--muted)}
+.tabs button[aria-selected=true]{background:var(--acc);border-color:var(--acc);color:#fff}
+.mgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.item{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.2rem 1.3rem;display:flex;flex-direction:column;gap:.35rem;transition:transform .3s var(--ease),box-shadow .3s}
+.item:hover{transform:translateY(-3px);box-shadow:0 14px 30px #4a3b3312}
+.item .row{display:flex;justify-content:space-between;align-items:baseline;gap:1rem}
+.item h3{font-size:1.22rem}
+.item .pr{font-weight:800;color:var(--acc2);white-space:nowrap}
+.item p{font-size:.92rem}
+.item .em{font-size:1.5rem}
+.note{font-size:.85rem;margin-top:1rem}
+
+/* конструктор напитка */
+.builder{background:var(--bg2)}
+.bgrid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
+.glassbox{display:flex;flex-direction:column;align-items:center;gap:1rem}
+.glass{position:relative;width:min(240px,60vw);height:320px;border:4px solid #fff;border-top:0;border-radius:0 0 46px 46px;background:#ffffff55;box-shadow:inset 0 0 0 1px #e4d7c9,0 30px 50px #4a3b3318;overflow:hidden;transition:width .5s var(--ease),height .5s var(--ease)}
+.glass::after{content:"";position:absolute;left:12%;top:6%;width:10%;height:80%;border-radius:99px;background:linear-gradient(#ffffffaa,#ffffff00);pointer-events:none}
+.layer{position:absolute;left:0;right:0;transition:height .7s var(--ease),bottom .7s var(--ease),background .5s}
+.ice{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s}
+.ice i{position:absolute;width:42px;height:42px;border-radius:9px;background:#ffffffb0;border:1px solid #fff;transform:rotate(18deg)}
+.cinn{position:absolute;left:0;right:0;height:14px;pointer-events:none;background:radial-gradient(circle,#9a6a45 1.2px,transparent 1.6px) 0 0/10px 7px;opacity:0;transition:opacity .4s,bottom .7s var(--ease)}
+.saucer{width:min(300px,72vw);height:14px;border-radius:50%;background:#fff;box-shadow:0 8px 18px #4a3b3315}
+.total{font:700 2rem "Playfair Display";color:var(--ink)}
+.total small{font:600 .85rem Manrope;color:var(--muted);display:block;text-align:center}
+.opts{display:flex;flex-direction:column;gap:1.1rem}
+.opt label{display:block;font-weight:800;font-size:.88rem;margin-bottom:.45rem}
+.seg{display:flex;flex-wrap:wrap;gap:.4rem}
+.seg button{border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:.5rem .8rem;font-weight:700;font-size:.9rem;cursor:pointer;color:var(--ink);transition:border-color .2s,background .2s}
+.seg button small{color:var(--muted);font-weight:600;margin-left:.25rem}
+.seg button[aria-pressed=true]{border-color:var(--acc);background:#F6E9DD}
+.seg button[disabled]{opacity:.35;cursor:not-allowed}
+.code{margin-top:.4rem;font-weight:800;color:var(--acc2)}
+.live{display:inline-flex;align-items:center;gap:.45rem}
+.facts b.live{font-size:1.55rem}
+.dot{flex:0 0 9px;width:9px;height:9px;border-radius:50%;background:#9DB89A;box-shadow:0 0 0 4px #9db89a33}
+.dot.off{background:#C9B6A6;box-shadow:0 0 0 4px #c9b6a633}
+.stamps{margin-top:1.2rem;background:#fff;border:1px dashed #d9c6b4;border-radius:16px;padding:1rem 1.1rem}
+.stamps b{font:700 1.05rem "Playfair Display"}
+.stamps .row{display:flex;gap:.45rem;margin:.6rem 0 .3rem}
+.stamps .row i{width:38px;height:38px;border-radius:50%;border:1.5px dashed #d9c6b4;display:grid;place-items:center;font-style:normal;font-size:1.1rem;transition:transform .4s var(--ease),background .3s}
+.stamps .row i.on{background:#F3E7DA;border-style:solid;border-color:#C08A63;transform:rotate(-8deg) scale(1.05)}
+.stamps .row i.gift{border-color:#9DB89A}
+.stamps small{color:var(--muted)}
+.hours{margin-top:1.2rem;display:grid;grid-template-columns:auto auto;gap:.3rem 1.4rem;width:max-content;font-size:.95rem}
+.hours span:nth-child(odd){color:var(--muted)}
+.hours .now{color:var(--acc2);font-weight:800}
+.mbar{display:none}
+
+
+/* карта зала */
+.hall-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,.9fr);gap:1.4rem;align-items:start}
+.mapbox{position:relative;background:var(--card);border:1px solid var(--line);border-radius:22px;overflow:hidden}
+.map{height:min(64vh,560px)}
+.map canvas{display:block;width:100%;height:100%;cursor:pointer;touch-action:pan-y}
+.legend{display:flex;gap:1rem;flex-wrap:wrap;padding:.8rem 1rem;border-top:1px solid var(--line);font-size:.84rem;color:var(--muted)}
+.legend i{display:inline-block;width:14px;height:14px;border-radius:4px;margin-right:.4rem;vertical-align:-2px;border:1px solid #0000000f}
+.ctrl{display:flex;flex-direction:column;gap:1rem}
+.box{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.1rem 1.2rem}
+.box label{display:block;font-weight:800;font-size:.86rem;margin-bottom:.5rem}
+.pick h3{font-size:1.35rem;margin-bottom:.3rem}
+.pick .feat{display:flex;gap:.4rem;flex-wrap:wrap;margin:.5rem 0 .9rem}
+.pick .feat span{background:var(--bg);border-radius:99px;padding:.25rem .65rem;font-size:.82rem;font-weight:700;color:var(--muted)}
+.pick input{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:.7rem .9rem;margin-bottom:.5rem;background:#fff}
+.ok{color:#5f8a5b;font-weight:800}.busy{color:#b07a5a;font-weight:800}
+
+/* коворкинг и контакты */
+.perks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem;margin-top:2rem}
+.perk{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:1.2rem}
+.perk b{display:block;font:700 1.15rem "Playfair Display";margin:.4rem 0 .2rem}
+.perk .em{font-size:1.5rem}
+.contact{display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,.8fr);gap:2rem;align-items:center}
+.cbox{background:var(--soft);border:1px solid var(--line);border-radius:24px;padding:2rem}
+.cbox .btn{margin-top:1rem}
+footer{padding:2rem 0 2.5rem;border-top:1px solid var(--line);font-size:.85rem;color:var(--muted)}
+footer .wrap{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media (max-width:960px){
+  .nav{display:none}
+  .hgrid,.hall-grid,.contact,.bgrid{grid-template-columns:1fr}
+  .mgrid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .perks{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cup{height:54vh;min-height:360px}
+}
+@media (max-width:560px){.mgrid,.perks{grid-template-columns:1fr}.map{height:60vh;min-height:380px}.glass{height:260px}
+  body{padding-bottom:76px}
+  .mbar{display:flex;gap:.5rem;position:fixed;left:0;right:0;bottom:0;z-index:30;padding:.6rem .8rem calc(.6rem + env(safe-area-inset-bottom));background:#F8F4EFf2;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line)}
+  .mbar a{flex:1;justify-content:center}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="concept" data-i="concept">Это концепт-сайт для портфолио. Кофейня «Dem», цены и столики придуманы. Сделал <a href="https://t.me/reix1" target="_blank" rel="noopener">Nury</a></div>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#top">Dem<small>coffee</small></a>
+  <nav class="nav"><a href="#menu" data-i="n_menu">Меню</a><a href="#builder" data-i="n_build">Свой напиток</a><a href="#hall" data-i="n_hall">Столики</a><a href="#contact" data-i="n_cont">Контакты</a></nav>
+  <div class="lang" role="group" aria-label="Язык"><button data-l="ru" aria-pressed="true">RU</button><button data-l="tk" aria-pressed="false">TK</button></div>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="wrap hgrid">
+  <div class="rv">
+    <span class="kick" data-i="h_k">Кофейня · Ашхабад</span>
+    <h1 data-i="h1">Кофе и место, где можно <i>выдохнуть</i></h1>
+    <p class="lead" data-i="lead">«Dem al» по-туркменски — «передохни». Хороший кофе, тихая зона, розетки у столиков и бариста, который нарисует ваше имя на пенке.</p>
+    <div style="display:flex;gap:.7rem;flex-wrap:wrap"><a class="btn" href="#hall" data-i="cta1">Забронировать столик</a><a class="btn ghost" href="#builder" data-i="cta2">Собрать свой напиток</a></div>
+    <div class="facts"><div><b class="live"><span class="dot" id="liveDot"></span><span id="liveTitle">—</span></b><span id="liveSub"></span></div><div><b id="freeNow">—</b><span id="freeSub" data-i="f2">столиков свободно сейчас</span></div><div><b>28 TMT</b><span data-i="f3">капучино</span></div></div>
+  </div>
+  <div class="rv">
+    <div class="cup"><canvas id="c-cup" aria-label="Чашка капучино: бариста рисует латте-арт"></canvas><span class="tag" data-i="tag">☕ потяните чашку</span><span class="step" id="artStep" hidden></span><div class="cupfb" id="cupFb" hidden>Dem</div></div>
+    <div class="chips" id="artChips"><small data-i="pat">Узор:</small><button type="button" data-p="heart" data-i="p_heart">Сердце</button><button type="button" data-p="tulip" data-i="p_tulip">Тюльпан</button><button type="button" data-p="rosetta" data-i="p_ros">Розетта</button></div>
+    <form class="art" id="artForm" onsubmit="return false"><input id="artName" maxlength="10" data-ph="ph_art" placeholder="Ваше имя — бариста напишет на пенке" autocomplete="given-name"><button class="btn" type="submit" data-i="draw">Написать</button></form>
+  </div>
+</div></section>
+
+<section id="menu"><div class="wrap">
+  <div class="head rv"><div><span class="kick" data-i="m_k">Меню</span><h2 data-i="m_h">Чашка на <i>любое</i> настроение</h2></div>
+    <div class="tabs" role="tablist" id="tabs"><button role="tab" data-t="coffee" aria-selected="true" data-i="t1">Кофе</button><button role="tab" data-t="other" aria-selected="false" data-i="t2">Не кофе</button><button role="tab" data-t="sweet" aria-selected="false" data-i="t3">Десерты</button><button role="tab" data-t="breakfast" aria-selected="false" data-i="t4">Завтраки</button></div></div>
+  <div class="mgrid" id="mgrid"></div>
+  <p class="note" data-i="m_note">Цены в манатах, концепт. Альтернативное молоко — +5 TMT.</p>
+</div></section>
+
+<section class="builder" id="builder"><div class="wrap">
+  <div class="head rv"><div><span class="kick" data-i="b_k">Свой напиток</span><h2 data-i="b_h">Соберите кофе <i>под себя</i></h2></div><p data-i="b_p">Выберите размер, основу, молоко и сироп — увидите, как выглядит напиток и сколько он стоит.</p></div>
+  <div class="bgrid">
+    <div class="glassbox rv"><div class="glass" id="glass">
+      <div class="layer" id="lSyr"></div><div class="layer" id="lEsp"></div><div class="layer" id="lMilk"></div><div class="layer" id="lFoam"></div>
+      <div class="cinn" id="cinn"></div><div class="ice" id="ice"><i style="left:18%;top:30%"></i><i style="left:52%;top:22%;transform:rotate(-12deg)"></i><i style="left:36%;top:48%;transform:rotate(30deg)"></i></div>
+    </div><div class="saucer"></div><div class="total"><span id="bTotal">28</span> TMT<small id="bName"></small></div></div>
+    <div class="opts rv">
+      <div class="opt"><label data-i="o_size">Размер</label><div class="seg" id="oSize"></div></div>
+      <div class="opt"><label data-i="o_base">Основа</label><div class="seg" id="oBase"></div></div>
+      <div class="opt"><label data-i="o_milk">Молоко</label><div class="seg" id="oMilk"></div></div>
+      <div class="opt"><label data-i="o_syr">Сироп</label><div class="seg" id="oSyr"></div></div>
+      <div class="opt"><label data-i="o_ext">Добавить</label><div class="seg" id="oExt"></div></div>
+      <div><button class="btn" type="button" id="bOrder" data-i="b_order">Заказать к столику</button><p class="code" id="bCode" aria-live="polite"></p><div class="stamps"><b data-i="s_h">Бонусная карта</b><div class="row" id="stampRow"></div><small id="stampTxt"></small></div></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="hall"><div class="wrap">
+  <div class="head rv"><div><span class="kick" data-i="h2_k">Столики</span><h2 data-i="h2_h">Выберите место — <i>оно ваше</i></h2></div><p data-i="h2_p">Выберите время: зелёные столики свободны. Значок ⚡ — у столика есть розетка.</p></div>
+  <div class="hall-grid">
+    <div class="mapbox rv"><div class="map"><canvas id="c-map" aria-label="3D-карта зала кофейни"></canvas></div>
+      <div class="legend"><span><i style="background:#93BF8C"></i><span data-i="lg1">свободно</span></span><span><i style="background:#E2DAD2"></i><span data-i="lg2">занято</span></span><span><i style="background:#E59B70"></i><span data-i="lg3">ваш выбор</span></span><span><i style="background:#E9C472"></i><span data-i="lg5">ваша бронь</span></span><span>⚡ <span data-i="lg4">розетка</span></span></div></div>
+    <div class="ctrl rv">
+      <div class="box"><label data-i="l_day">День</label><div class="seg" id="segDay"></div></div>
+      <div class="box"><label data-i="l_time">Время</label><div class="seg" id="segTime"></div><label style="margin-top:.8rem" data-i="l_dur">Сколько часов</label><div class="seg" id="segDur"></div></div>
+      <div class="box pick" id="pick"></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="cowork" style="padding-top:0"><div class="wrap">
+  <span class="kick rv" data-i="c_k">Работать у нас</span><h2 class="rv" data-i="c_h">Кофейня, где удобно <i>работать</i></h2>
+  <div class="perks">
+    <div class="perk rv"><span class="em">📶</span><b data-i="pk1">Быстрый Wi-Fi</b><p data-i="pk1p">Пароль — на чеке.</p></div>
+    <div class="perk rv"><span class="em">⚡</span><b data-i="pk2">Розетки</b><p data-i="pk2p">У 8 столиков из 14 — смотрите ⚡ на карте.</p></div>
+    <div class="perk rv"><span class="em">🤫</span><b data-i="pk3">Тихая зона</b><p data-i="pk3p">У окна, без музыки — для учёбы и созвонов.</p></div>
+    <div class="perk rv"><span class="em">🕗</span><b data-i="pk4">С 8 утра</b><p data-i="pk4p">Завтраки до 12:00, кофе до 23:00.</p></div>
+  </div>
+</div></section>
+
+<section id="contact" style="padding-top:0"><div class="wrap contact">
+  <div class="rv"><span class="kick" data-i="ct_k">Контакты</span><h2 data-i="ct_h">Заходите <i>передохнуть</i></h2><p style="margin-top:1rem" data-i="ct_p">Ашхабад, адрес концептуальный.</p><div class="hours" id="hours"></div><p style="margin-top:.8rem" class="live"><span class="dot" id="liveDot2"></span><span id="liveTitle2"></span></p></div>
+  <div class="cbox rv"><b style="font:700 1.35rem 'Playfair Display'" data-i="cb_h">Хотите такой сайт для своей кофейни?</b><p style="margin-top:.6rem" data-i="cb_p">Этот концепт сделал Nury: сайт, 3D, бронь столиков, меню, ролики для Instagram.</p><a class="btn" href="https://t.me/reix1" target="_blank" rel="noopener" data-i="cb_b">Написать Nury →</a></div>
+</div></section>
+</main>
+<nav class="mbar" aria-label="Быстрые действия"><a class="btn" href="#hall" data-i="mb1">🪑 Столик</a><a class="btn ghost" href="#menu" data-i="mb2">☕ Меню</a></nav>
+<footer><div class="wrap"><span>Dem coffee · <span data-i="ft">концепт-сайт для портфолио</span></span><span>© 2026 Nury</span></div></footer>
+
+<script>
+/* ====== языки (туркменский — проверить носителю языка) ====== */
+const I18N={
+ concept:['Это концепт-сайт для портфолио. Кофейня «Dem», цены и столики придуманы. Сделал <a href="https://t.me/reix1" target="_blank" rel="noopener">Nury</a>','Bu portfolio üçin konsept-saýt. «Dem» kofehanasy, bahalar we stollar oýlanyp tapyldy. Taýýarlan: <a href="https://t.me/reix1" target="_blank" rel="noopener">Nury</a>'],
+ n_menu:['Меню','Menýu'],n_build:['Свой напиток','Öz içgiňiz'],n_hall:['Столики','Stollar'],n_cont:['Контакты','Habarlaşmak'],
+ h_k:['Кофейня · Ашхабад','Kofehana · Aşgabat'],
+ h1:['Кофе и место, где можно <i>выдохнуть</i>','Kofe we <i>dem alyp</i> boljak ýer'],
+ lead:['«Dem al» по-туркменски — «передохни». Хороший кофе, тихая зона, розетки у столиков и бариста, который нарисует ваше имя на пенке.','«Dem al» — dynç al diýmek. Gowy kofe, ümsüm zolak, stollaryň ýanynda rozetkalar we adyňyzy köpürjikde çekjek barista.'],
+ cta1:['Забронировать столик','Stol bronlamak'],cta2:['Собрать свой напиток','Öz içgiňizi düzmek'],
+ f1:['открываемся','açylýarys'],f3:['капучино','kapuçino'],
+ tag:['☕ потяните чашку','☕ käsäni çekiň'],pat:['Узор:','Nagyş:'],p_heart:['Сердце','Ýürek'],p_tulip:['Тюльпан','Läle'],p_ros:['Розетта','Rozetta'],
+ ph_art:['Ваше имя — бариста напишет на пенке','Adyňyz — barista köpürjikde ýazar'],draw:['Написать','Ýazmak'],
+ st_pour:['Бариста наливает молоко…','Barista süýt guýýar…'],st_pull:['Протяжка — и узор готов','Çekiş — nagyş taýýar'],st_etch:['Пишет палочкой…','Taýajyk bilen ýazýar…'],st_done:['Готово — приятного кофе ☕','Taýýar — kofäňiz süýji bolsun ☕'],
+ m_k:['Меню','Menýu'],m_h:['Чашка на <i>любое</i> настроение','<i>Islendik</i> keýp üçin bir käse'],
+ t1:['Кофе','Kofe'],t2:['Не кофе','Kofe däl'],t3:['Десерты','Süýjüler'],t4:['Завтраки','Ertirlik'],
+ m_note:['Цены в манатах, концепт. Альтернативное молоко — +5 TMT.','Bahalar manatda, konsept. Başga süýt — +5 TMT.'],
+ b_k:['Свой напиток','Öz içgiňiz'],b_h:['Соберите кофе <i>под себя</i>','Kofäni <i>özüňize görä</i> düzüň'],
+ b_p:['Выберите размер, основу, молоко и сироп — увидите, как выглядит напиток и сколько он стоит.','Ölçegi, esasy, süýdi we siropy saýlaň — içginiň nähili görünýändigini we bahasyny görersiňiz.'],
+ o_size:['Размер','Ölçeg'],o_base:['Основа','Esasy'],o_milk:['Молоко','Süýt'],o_syr:['Сироп','Sirop'],o_ext:['Добавить','Goşmak'],
+ b_order:['Заказать к столику','Stola sargyt etmek'],b_code:['Ваш код: {c}. Назовите его бариста — напиток принесут к столику. (Концепт: заказ никуда не отправляется.)','Siziň koduňyz: {c}. Barista aýdyň — içgini stola getirerler. (Konsept: sargyt hiç ýere iberilmeýär.)'],
+ h2_k:['Столики','Stollar'],h2_h:['Выберите место — <i>оно ваше</i>','Ýeriňizi saýlaň — <i>ol siziňki</i>'],
+ h2_p:['Выберите время: зелёные столики свободны. Значок ⚡ — у столика есть розетка.','Wagty saýlaň: ýaşyl stollar boş. ⚡ — stolda rozetka bar.'],
+ lg1:['свободно','boş'],lg2:['занято','eýeli'],lg3:['ваш выбор','saýlawyňyz'],lg4:['розетка','rozetka'],lg5:['ваша бронь','bronuňyz'],
+ l_day:['День','Gün'],l_time:['Время','Wagt'],l_dur:['Сколько часов','Näçe sagat'],
+ p_none:['Нажмите на столик на карте','Kartada stola basyň'],p_hint:['Покажу, сколько мест, есть ли розетка и свободен ли он в это время.','Näçe orunlydygyny, rozetkasynyň bardygyny we bu wagt boşdugyny görkezerin.'],
+ c_k:['Работать у нас','Bizde işlemek'],c_h:['Кофейня, где удобно <i>работать</i>','<i>Işlemäge</i> amatly kofehana'],
+ pk1:['Быстрый Wi-Fi','Çalt Wi-Fi'],pk1p:['Пароль — на чеке.','Paroly — çekde.'],pk2:['Розетки','Rozetkalar'],pk2p:['У 8 столиков из 14 — смотрите ⚡ на карте.','14 stoldan 8-inde — kartada ⚡ serediň.'],
+ pk3:['Тихая зона','Ümsüm zolak'],pk3p:['У окна, без музыки — для учёбы и созвонов.','Penjiräniň ýanynda, sazsyz — okuw we jaňlar üçin.'],pk4:['С 8 утра','Irden 8-den'],pk4p:['Завтраки до 12:00, кофе до 23:00.','Ertirlik 12:00-a çenli, kofe 23:00-a çenli.'],
+ ct_k:['Контакты','Habarlaşmak'],ct_h:['Заходите <i>передохнуть</i>','<i>Dem almaga</i> geliň'],ct_p:['Ашхабад, адрес концептуальный. Каждый день с 08:00 до 23:00.','Aşgabat, salgy konseptual. Her gün 08:00-dan 23:00-a çenli.'],
+ cb_h:['Хотите такой сайт для своей кофейни?','Kofehanaňyz üçin şeýle saýt isleýärsiňizmi?'],cb_p:['Этот концепт сделал Nury: сайт, 3D, бронь столиков, меню, ролики для Instagram.','Bu konsepti Nury taýýarlady: saýt, 3D, stol bronlamak, menýu, Instagram üçin wideolar.'],cb_b:['Написать Nury →','Nury-ä ýazmak →'],
+ ft:['концепт-сайт для портфолио','portfolio üçin konsept-saýt'],
+ today:['Сегодня','Şu gün'],tomorrow:['Завтра','Ertir'],wd:[['Пн','Вт','Ср','Чт','Пт','Сб','Вс'],['Db','Sb','Çb','Pb','An','Şb','Ýb']],
+ h_:['ч','sag'],seats:['мест','orun'],socket:['⚡ розетка','⚡ rozetka'],window:['у окна','penjiräniň ýanynda'],quiet:['тихая зона','ümsüm zolak'],sofa:['диван','diwan'],
+ table:['Столик','Stol'],free:['Свободен: {t}','Boş: {t}'],busy:['Занят в это время — выберите другое время или столик','Bu wagt eýeli — başga wagt ýa-da stol saýlaň'],
+ ph_name:['Ваше имя','Adyňyz'],ph_phone:['Телефон, например +993 65 123456','Telefon, mysal üçin +993 65 123456'],book:['Забронировать','Bronlamak'],
+ booked:['✓ Забронировано: {d}, {t}. В концепте бронь никуда не отправляется — в настоящем сайте она придёт кофейне.','✓ Bronlandy: {d}, {t}. Konseptde bron hiç ýere iberilmeýär — hakyky saýtda kofehana barar.'],
+ need:['Укажите имя и телефон','Adyňyzy we telefonyňyzy ýazyň'],yours:['Ваша бронь','Siziň bronuňyz'],
+ z_win:['ОКНО · ТИХО','PENJIRE · ÜMSÜM'],z_sofa:['ДИВАНЫ','DIWANLAR'],z_bar:['БАР','BAR'],z_big:['КОМПАНИЯ','TOPAR'],
+ f2:['столиков свободно сейчас','stol häzir boş'],f2b:['столиков свободно утром','stol irden boş'],
+ open:['Открыто','Açyk'],closed:['Закрыто','Ýapyk'],till:['до {t}','{t}-a çenli'],opens:['откроемся в {t}','{t}-da açylarys'],
+ s_h:['Бонусная карта','Bonus kartasy'],s_txt:['Каждый заказ — штамп. 6-й кофе — в подарок.','Her sargyt — möhür. 6-njy kofe — sowgat.'],s_gift:['🎁 Следующий кофе — в подарок!','🎁 Indiki kofe — sowgat!'],s_left:['До подарка: {n}','Sowgada çenli: {n}'],
+ wk:['Пн–Пт','Db–An'],we:['Сб–Вс','Şb–Ýb'],mb1:['🪑 Столик','🪑 Stol'],mb2:['☕ Меню','☕ Menýu'],
+ title:['Dem — кофейня в Ашхабаде · концепт','Dem — Aşgabatdaky kofehana · konsept']
+};
+const MENU={
+ coffee:[['☕','Эспрессо','Espresso',18,'Плотный, с карамельной крема','Goýy, karamel kremaly'],['☕','Американо','Amerikano',22,'Эспрессо и горячая вода','Espresso we gyzgyn suw'],['🥛','Капучино','Kapuçino',28,'С латте-артом — можно с вашим именем','Latte-art bilen — adyňyz bilen hem bolýar'],['🥛','Латте','Latte',30,'Больше молока, мягкий вкус','Köp süýtli, ýumşak tagam'],['🍯','Раф медовый','Ballı raf',35,'Сливки и мёд','Gaýmak we bal'],['🧊','Фраппе','Frappe',38,'Холодный, со льдом','Sowuk, buzly']],
+ other:[['🍵','Матча-латте','Matça-latte',35,'Японский зелёный чай с молоком','Ýapon gök çaýy süýt bilen'],['🍫','Какао','Kakao',25,'С маршмеллоу','Marşmellow bilen'],['🍋','Лимонад','Limonad',25,'Лимон, мята, лёд','Limon, ýalpyz, buz'],['🫖','Зелёный чай, чайник','Gök çaý, çäýnek',15,'Как дома','Öýdäki ýaly']],
+ sweet:[['🍰','Чизкейк','Çizkeýk',35,'Нью-Йорк, классический','Nýu-Ýork, nusgawy'],['🥐','Круассан','Kruassan',25,'С маслом или с шоколадом','Ýag ýa-da şokolad bilen'],['🍯','Пахлава','Pahlawa',20,'К чаю и кофе','Çaý we kofe bilen']],
+ breakfast:[['🥑','Тост с авокадо','Awokadoly tost',45,'Яйцо пашот, зелень','Paşot ýumurtga, gök önüm'],['🥞','Сырники','Syrnik',40,'Со сметаной и ягодами','Smetana we miweler bilen'],['🥣','Гранола','Granola',35,'Йогурт, мёд, фрукты','Ýogurt, bal, miweler']]
+};
+// конструктор: размеры, основы (цена S/M/L, доля эспрессо, пенка), молоко, сиропы, добавки
+const B={
+ size:[['S','250 ml',0,.62],['M','350 ml',1,.76],['L','450 ml',2,.9]],
+ base:[['cap',['Капучино','Kapuçino'],[25,28,32],.28,.22,'#7B4A2C'],['lat',['Латте','Latte'],[27,30,34],.18,.1,'#7B4A2C'],['raf',['Раф','Raf'],[32,35,39],.16,.14,'#8C5A3A'],['mat',['Матча','Matça'],[32,35,39],.3,.1,'#8DAA6A']],
+ milk:[['cow',['Обычное','Adaty'],0,'#FBF5EC'],['oat',['Овсяное','Süle'],5,'#F3E6D1'],['alm',['Миндальное','Badam'],5,'#F6ECE0'],['lf',['Без лактозы','Laktozasyz'],3,'#FAF3EA']],
+ syr:[['no',['Без сиропа','Siropsyz'],0,null],['car',['Карамель','Karamel'],4,'#D9A066'],['van',['Ваниль','Wanil'],4,'#EEDCB5'],['haz',['Фундук','Fundук'],4,'#C89A72']],
+ ext:[['shot',['+ шот','+ şot'],6],['cin',['Корица','Darçyn'],0],['ice',['Со льдом','Buzly'],0]]
+};
+B.syr[3][1][1]='Fundук'.replace('ук','uk');
+const TABLES=[[1,-3.6,-1.9,2,1,1,1,1,0],[2,-3.6,-.3,2,1,1,1,1,0],[3,-3.6,1.3,2,1,1,1,1,0],[4,-1.7,-1.5,4,0,1,0,0,0],[5,-1.7,.9,4,0,0,0,0,0],[6,.2,-1.5,2,1,0,0,0,0],[7,.2,.1,2,1,1,0,0,0],[8,.2,1.7,4,0,0,0,0,0],[9,2,-1.5,2,1,0,0,0,0],[10,2,.1,2,1,1,0,0,0],[11,2,1.7,2,1,0,0,0,0],[12,3.9,-.4,4,0,1,0,0,1],[13,3.9,1.5,4,0,1,0,0,1],[14,-1.7,2.35,6,0,0,0,0,0]];
+const LI={ru:0,tk:1};let LANG='ru';
+try{const q=new URLSearchParams(location.search).get('lang'),s=localStorage.getItem('dem-lang');LANG=LI[q]!=null?q:LI[s]!=null?s:((navigator.language||'').startsWith('tk')?'tk':'ru')}catch(_){}
+const T=k=>(I18N[k]||[k,k])[LI[LANG]];
+const still=matchMedia('(prefers-reduced-motion:reduce)').matches&&!/motion=1/.test(location.search);
+function applyLang(l){LANG=l;document.documentElement.lang=l;
+  document.querySelectorAll('[data-i]').forEach(e=>{const v=I18N[e.dataset.i];if(v)e.innerHTML=v[LI[l]]});
+  document.querySelectorAll('[data-ph]').forEach(e=>{const v=I18N[e.dataset.ph];if(v)e.placeholder=v[LI[l]]});
+  document.querySelectorAll('.lang button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.l===l));
+  document.title=T('title');try{localStorage.setItem('dem-lang',l)}catch(_){}
+  renderMenu();buildUI();window.hallUI&&hallUI();window.mapLabels&&mapLabels();window.liveStatus&&liveStatus();window.stampsUI&&stampsUI()}
+document.querySelectorAll('.lang button').forEach(b=>b.onclick=()=>applyLang(b.dataset.l));
+
+/* ====== меню ====== */
+let TAB='coffee';
+function renderMenu(){const g=document.getElementById('mgrid'),i=LI[LANG];
+  g.innerHTML=MENU[TAB].map(m=>`<article class="item"><span class="em">${m[0]}</span><div class="row"><h3>${m[1+i]}</h3><span class="pr">${m[3]} TMT</span></div><p>${m[4+i]}</p></article>`).join('')}
+document.getElementById('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;TAB=b.dataset.t;document.querySelectorAll('#tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));renderMenu()});
+const rio=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');rio.unobserve(e.target)}}),{rootMargin:'0px 0px -8% 0px'});
+document.querySelectorAll('.rv').forEach(el=>rio.observe(el));
+
+/* ====== конструктор напитка ====== */
+const BS={size:1,base:0,milk:0,syr:0,ext:new Set()};
+function seg(id,items,cur,label,extra){document.getElementById(id).innerHTML=items.map((it,k)=>`<button type="button" data-k="${k}" aria-pressed="${typeof cur==='object'?cur.has(k):cur===k}">${label(it)}${extra?extra(it):''}</button>`).join('')}
+function buildUI(){const i=LI[LANG];
+  seg('oSize',B.size,BS.size,s=>s[0],s=>`<small>${s[1]}</small>`);
+  seg('oBase',B.base,BS.base,b=>b[1][i]);
+  seg('oMilk',B.milk,BS.milk,m=>m[1][i],m=>m[2]?`<small>+${m[2]}</small>`:'');
+  seg('oSyr',B.syr,BS.syr,s=>s[1][i],s=>s[2]?`<small>+${s[2]}</small>`:'');
+  seg('oExt',B.ext,BS.ext,e=>e[1][i],e=>e[2]?`<small>+${e[2]}</small>`:'');
+  drawGlass()}
+function drawGlass(){const s=B.size[BS.size],b=B.base[BS.base],m=B.milk[BS.milk],y=B.syr[BS.syr],ice=BS.ext.has(2),cin=BS.ext.has(1),shot=BS.ext.has(0);
+  const glass=document.getElementById('glass'),H=glass.clientHeight||320,fill=s[3]*H;
+  glass.style.width=`min(${[200,230,250][BS.size]}px,60vw)`;
+  const syr=y[3]?fill*.08:0,esp=fill*(b[3]+(shot?.08:0)),foam=ice?0:fill*b[4],milk=Math.max(0,fill-syr-esp-foam);
+  const set=(id,bot,h,bg)=>{const e=document.getElementById(id);e.style.bottom=bot+'px';e.style.height=h+'px';e.style.background=bg};
+  set('lSyr',0,syr,y[3]?`linear-gradient(${y[3]},${y[3]}cc)`:'transparent');
+  set('lEsp',syr,esp,`linear-gradient(${b[5]},${b[5]}dd)`);
+  set('lMilk',syr+esp,milk,`linear-gradient(${m[3]},${b[0]==='mat'?'#cfe0b6':'#e9d3b8'})`);
+  set('lFoam',syr+esp+milk,foam,`linear-gradient(#ffffff,${m[3]})`);
+  const c=document.getElementById('cinn');c.style.bottom=(fill-12)+'px';c.style.opacity=cin&&!ice?1:0;
+  document.getElementById('ice').style.opacity=ice?1:0;
+  const total=b[2][s[2]]+m[2]+y[2]+(shot?6:0);document.getElementById('bTotal').textContent=total;
+  document.getElementById('bName').textContent=`${b[1][LI[LANG]]}${ice?' · ❄':''} · ${s[0]} ${s[1]}`}
+[['oSize','size'],['oBase','base'],['oMilk','milk'],['oSyr','syr']].forEach(([id,k])=>document.getElementById(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;BS[k]=+b.dataset.k;buildUI();document.getElementById('bCode').textContent=''}));
+document.getElementById('oExt').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;const k=+b.dataset.k;BS.ext.has(k)?BS.ext.delete(k):BS.ext.add(k);buildUI();document.getElementById('bCode').textContent=''});
+document.getElementById('bOrder').onclick=()=>{document.getElementById('bCode').textContent=T('b_code').replace('{c}','DEM-'+(1000+Math.floor(Math.random()*9000)))};
+
+/* ====== бронь: дни, время, часы ====== */
+const nowA=()=>new Date(Date.now()+5*3600e3+new Date().getTimezoneOffset()*60e3);
+const SEL={day:0,time:null,dur:2,table:null,mine:{}};
+function dayList(){const out=[],n=nowA();for(let k=0;k<5;k++){const d=new Date(n);d.setDate(n.getDate()+k);out.push(d)}return out}
+function dayLabel(d,k){return k===0?T('today'):k===1?T('tomorrow'):`${T('wd')[(d.getDay()+6)%7]}, ${String(d.getDate()).padStart(2,'0')}.${String(d.getMonth()+1).padStart(2,'0')}`}
+function times(){const out=[],n=nowA();for(let h=8;h<=21;h++){if(SEL.day===0&&h<=n.getHours())continue;out.push(h)}return out}
+function hash(s){let h=2166136261;for(const c of s){h^=c.charCodeAt(0);h=Math.imul(h,16777619)}return (h>>>0)/4294967295}
+function isBusy(id,day,h,dur){const key=`${day}:${id}`;if(SEL.mine[key]&&SEL.mine[key].some(([a,b])=>h<b&&h+dur>a))return 'mine';for(let k=0;k<dur;k++)if(hash(`${day}|${id}|${h+k}`)<.38)return true;return false}
+window.hallUI=function(){
+  const sd=document.getElementById('segDay'),st=document.getElementById('segTime'),sr=document.getElementById('segDur');
+  sd.innerHTML=dayList().map((d,k)=>`<button type="button" data-k="${k}" aria-pressed="${k===SEL.day}">${dayLabel(d,k)}</button>`).join('');
+  const ts=times();if(SEL.time==null||!ts.includes(SEL.time))SEL.time=ts[0]??null;
+  st.innerHTML=ts.length?ts.map(h=>`<button type="button" data-h="${h}" aria-pressed="${h===SEL.time}">${h}:00</button>`).join(''):`<span>—</span>`;
+  sr.innerHTML=[1,2,3].map(n=>`<button type="button" data-n="${n}" aria-pressed="${n===SEL.dur}" ${SEL.time!=null&&SEL.time+n>23?'disabled':''}>${n} ${T('h_')}</button>`).join('');
+  renderPick();window.mapRecolor&&mapRecolor()};
+document.getElementById('segDay').onclick=e=>{const b=e.target.closest('button');if(!b)return;SEL.day=+b.dataset.k;SEL.time=null;hallUI()};
+document.getElementById('segTime').onclick=e=>{const b=e.target.closest('button');if(!b)return;SEL.time=+b.dataset.h;hallUI()};
+document.getElementById('segDur').onclick=e=>{const b=e.target.closest('button');if(!b||b.disabled)return;SEL.dur=+b.dataset.n;hallUI()};
+function renderPick(msg){const p=document.getElementById('pick');const t=TABLES.find(x=>x[0]===SEL.table);
+  if(!t){p.innerHTML=`<h3>${T('p_none')}</h3><p>${T('p_hint')}</p>`;return}
+  const [id,,,seats,,sock,win,quiet,sofa]=t,b=SEL.time==null?true:isBusy(id,SEL.day,SEL.time,SEL.dur);
+  const feats=[`${seats} ${T('seats')}`];if(sock)feats.push(T('socket'));if(win)feats.push(T('window'));if(quiet)feats.push(T('quiet'));if(sofa)feats.push(T('sofa'));
+  const when=SEL.time==null?'':`${dayLabel(dayList()[SEL.day],SEL.day)}, ${SEL.time}:00–${SEL.time+SEL.dur}:00`;
+  let html=`<h3>${T('table')} ${id}</h3><div class="feat">${feats.map(f=>`<span>${f}</span>`).join('')}</div>`;
+  if(b==='mine')html+=`<p class="ok">${T('yours')}: ${when}</p>`;
+  else if(b)html+=`<p class="busy">${T('busy')}</p>`;
+  else html+=`<p class="ok">${T('free').replace('{t}',when)}</p><div style="margin-top:.7rem"><input id="bkName" placeholder="${T('ph_name')}" autocomplete="name"><input id="bkPhone" placeholder="${T('ph_phone')}" inputmode="tel" autocomplete="tel"><button class="btn" id="bkBtn" type="button">${T('book')}</button></div>`;
+  if(msg)html+=`<p style="margin-top:.6rem" class="${msg.ok?'ok':'busy'}">${msg.t}</p>`;
+  p.innerHTML=html;
+  const btn=document.getElementById('bkBtn');if(btn)btn.onclick=()=>{const n=document.getElementById('bkName').value.trim(),ph=document.getElementById('bkPhone').value.replace(/\D/g,'');
+    if(n.length<2||ph.length<6){renderPick({ok:false,t:T('need')});return}
+    const key=`${SEL.day}:${id}`;(SEL.mine[key]=SEL.mine[key]||[]).push([SEL.time,SEL.time+SEL.dur]);
+    renderPick({ok:true,t:T('booked').replace('{d}',dayLabel(dayList()[SEL.day],SEL.day)).replace('{t}',`${SEL.time}:00–${SEL.time+SEL.dur}:00`)});window.mapRecolor&&mapRecolor()}}
+/* ====== открыто сейчас: время Ашхабада, часы по дням, свободные столики ====== */
+const OPEN=d=>{const w=(d.getDay()+6)%7;return w>=5?[9,23]:[8,23]};
+window.liveStatus=function(){const n=nowA(),[o,c]=OPEN(n),h=n.getHours()+n.getMinutes()/60,isOpen=h>=o&&h<c;
+  const title=isOpen?T('open'):T('closed'),sub=isOpen?T('till').replace('{t}',c+':00'):T('opens').replace('{t}',(h<o?o:OPEN(new Date(n.getTime()+864e5))[0])+':00');
+  [['liveDot','liveTitle'],['liveDot2','liveTitle2']].forEach(([d,t],i)=>{const D=document.getElementById(d),E=document.getElementById(t);if(D)D.classList.toggle('off',!isOpen);if(E)E.textContent=i?`${title} · ${sub}`:title});
+  document.getElementById('liveSub').textContent=sub;
+  const free=isOpen?TABLES.filter(t=>!isBusy(t[0],0,n.getHours(),1)).length:TABLES.length;document.getElementById('freeNow').textContent=`${free} / ${TABLES.length}`;document.getElementById('freeSub').textContent=T(isOpen?'f2':'f2b');
+  const wd=(n.getDay()+6)%7;document.getElementById('hours').innerHTML=`<span class="${wd<5?'now':''}">${T('wk')}</span><span class="${wd<5?'now':''}">08:00–23:00</span><span class="${wd>=5?'now':''}">${T('we')}</span><span class="${wd>=5?'now':''}">09:00–23:00</span>`};
+setInterval(()=>window.liveStatus(),60e3);
+/* ====== бонусная карта: штамп за каждый заказ, 6-й кофе — подарок ====== */
+let STAMPS=0;try{STAMPS=+localStorage.getItem('dem-stamps')||0}catch(_){}
+window.stampsUI=function(pop){const k=STAMPS%6,full=STAMPS>0&&k===0;const row=document.getElementById('stampRow');
+  row.innerHTML=[...Array(6)].map((_,i)=>{const on=full||i<k;return `<i class="${on?'on':''} ${i===5?'gift':''}">${on?'☕':i===5?'🎁':''}</i>`}).join('');
+  document.getElementById('stampTxt').textContent=full?T('s_gift'):`${T('s_txt')} ${T('s_left').replace('{n}',6-k)}`;
+  if(pop&&!still){const i=row.children[(full?6:k)-1];if(i)i.animate([{transform:'scale(1.6) rotate(-20deg)'},{transform:'scale(1.05) rotate(-8deg)'}],{duration:450,easing:'cubic-bezier(.16,1,.3,1)'})}};
+document.getElementById('bOrder').addEventListener('click',()=>{STAMPS++;try{localStorage.setItem('dem-stamps',STAMPS)}catch(_){}stampsUI(true)});
+applyLang(LANG);
+addEventListener('resize',()=>drawGlass());
+</script>
+
+<script src="assets/lib/three.min.js"></script>
+<script src="assets/lib/RoomEnvironment.js"></script>
+<script>
+(function(){
+if(!window.THREE){document.getElementById('cupFb').hidden=false;document.getElementById('c-cup').hidden=true;document.querySelector('.mapbox').hidden=true;return}
+const lin=h=>new THREE.Color(h).convertSRGBToLinear();
+function stage(canvas,{fov=35}={}){let r;try{r=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true})}catch(e){return null}
+  r.setPixelRatio(Math.min(devicePixelRatio,2));r.outputEncoding=THREE.sRGBEncoding;r.toneMapping=THREE.ACESFilmicToneMapping;r.toneMappingExposure=1.05;
+  const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(fov,1,.1,100);
+  if(THREE.RoomEnvironment)scene.environment=new THREE.PMREMGenerator(r).fromScene(new THREE.RoomEnvironment(),.04).texture;
+  const s={r,scene,cam,vis:false,fit:[]};
+  const fit=()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;r.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix();s.fit.forEach(f=>f(w,h))};
+  s.resize=fit;new ResizeObserver(fit).observe(canvas);fit();new IntersectionObserver(([e])=>s.vis=e.isIntersecting).observe(canvas);return s}
+const lathe=(pts,mat,seg=96)=>{const sp=new THREE.SplineCurve(pts.map(p=>new THREE.Vector2(p[0],p[1])));return new THREE.Mesh(new THREE.LatheGeometry(sp.getPoints(pts.length*10),seg),mat)};
+const cl=(x,a=0,b=1)=>Math.min(b,Math.max(a,x)),eo=x=>1-Math.pow(1-x,3),eio=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+
+/* ---------- 1) ЧАШКА: латте-арт как у бариста ---------- */
+try{
+  const cv=document.getElementById('c-cup'),s=stage(cv,{fov:30});if(!s)throw 0;const {scene,cam,r}=s;
+  const W=1024,C=W/2;
+  const mk=()=>{const c=document.createElement('canvas');c.width=c.height=W;return [c,c.getContext('2d')]};
+  const [foam,fg]=mk(),[crema,cg]=mk(),[milk,kg]=mk(),[ink,ig]=mk(),[inkT,tg]=mk();
+  // крема: тёплый градиент, «тигровые» пятна и пузырьки — рисуется один раз
+  (()=>{const g=cg.createRadialGradient(C,C,0,C,C,C);g.addColorStop(0,'#C4935F');g.addColorStop(.5,'#B07A47');g.addColorStop(.86,'#8B5630');g.addColorStop(1,'#64391B');cg.fillStyle=g;cg.fillRect(0,0,W,W);
+    for(let i=0;i<260;i++){const x=Math.random()*W,y=Math.random()*W;cg.fillStyle=`rgba(${Math.random()<.5?'95,55,25':'215,170,120'},${.05+Math.random()*.07})`;cg.beginPath();cg.ellipse(x,y,6+Math.random()*26,3+Math.random()*12,Math.random()*3,0,7);cg.fill()}
+    for(let i=0;i<500;i++){cg.fillStyle=`rgba(255,235,205,${Math.random()*.12})`;cg.beginPath();cg.arc(Math.random()*W,Math.random()*W,Math.random()*2.4+.4,0,7);cg.fill()}})();
+  const tex=new THREE.CanvasTexture(foam);tex.encoding=THREE.sRGBEncoding;tex.anisotropy=8;
+  const MILK='#FFF9F1';
+  // «живой» край пятна молока
+  function blob(g,x,y,rx,ry,seed){g.beginPath();for(let a=0;a<=Math.PI*2+.01;a+=Math.PI/90){const k=1+.028*Math.sin(5*a+seed)+.018*Math.sin(11*a+seed*1.7)+.01*Math.sin(23*a+seed*3);const px=x+Math.cos(a)*rx*k,py=y+Math.sin(a)*ry*k;a?g.lineTo(px,py):g.moveTo(px,py)}g.closePath()}
+  function heartPts(cx,cy,R,k,seed){const pts=[];for(let i=0;i<=180;i++){const t=i/180*Math.PI*2;
+      const hx=16*Math.pow(Math.sin(t),3),hy=-(13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t));
+      const cxp=Math.sin(t)*16,cyp=-Math.cos(t)*16*.92;const w=1+.02*Math.sin(5*t+seed);
+      pts.push([cx+(cxp+(hx-cxp)*k)*R/16*w,cy+(cyp+(hy-cyp)*k)*R/16*w+k*R*.08])}return pts}
+  function fillPts(g,pts){g.beginPath();pts.forEach(([x,y],i)=>i?g.lineTo(x,y):g.moveTo(x,y));g.closePath();g.fill()}
+  // узоры: рисуются заново по прогрессу p (0..1), возвращают точку, куда льётся молоко
+  const PAT={
+    heart(p,R=235){const a=cl(p/.62),b=cl((p-.62)/.38),r=R*eo(a);kg.fillStyle=MILK;
+      if(b<=0){blob(kg,C,C+30,r,r*.95,1.3);kg.fill();kg.strokeStyle='rgba(176,122,71,.22)';kg.lineWidth=3;[.55,.78].forEach(f=>{if(r*f>20){blob(kg,C,C+30-r*.1,r*f,r*f*.93,2+f);kg.stroke()}});return {x:C,y:C+30-r*.15,pour:p<1}}
+      fillPts(kg,heartPts(C,C+30,R,eio(b),1.3));return {x:C,y:C-R*.9+b*R*1.95,pour:b<1,pull:true}},
+    tulip(p){const N=3,seg=.25;kg.fillStyle=MILK;let pt={x:C,y:C};
+      // слои: верхний — самый большой и круглый, каждый следующий вдавливается в предыдущий
+      const L=[[C-120,215,165],[C+5,165,122],[C+105,115,88]];
+      for(let k=0;k<N;k++){const a=cl((p-k*seg)/seg);if(a<=0)break;const [y,rx,ry]=L[k],e=eo(a);
+        if(k>0){kg.save();kg.fillStyle='#A8723F';blob(kg,C,y-6,rx*e+16,ry*e+16,k*2.1);kg.fill();kg.restore()}
+        if(k===N-1){fillPts(kg,heartPts(C,y-10,ry*e*1.05,.85,k))}else{blob(kg,C,y,rx*e,ry*e,k*2.1);kg.fill()}
+        pt={x:C,y:y+ry*.3,pour:true}}
+      const b=cl((p-N*seg)/(1-N*seg));if(b>0){const y0=C-275,y1=C+190,yy=y0+(y1-y0)*b;kg.beginPath();kg.moveTo(C-5,y0);kg.lineTo(C+5,y0);kg.lineTo(C+1.5,yy);kg.lineTo(C-1.5,yy);kg.fill();pt={x:C,y:yy,pour:b<1,pull:true}}
+      return pt},
+    rosetta(p){const a=cl(p/.74),b=cl((p-.74)/.26),N=8;kg.fillStyle=MILK;
+      // листики-полумесяцы: снизу широкие, к верху уже; между ними — полоски крема
+      const done=a*N;for(let j=0;j<Math.floor(done)+1&&j<N;j++){const f=eo(cl(done-j)),y=C+200-j*52,w=(80+170*(1-Math.pow(j/N,1.7)))*f;if(w<=2)continue;
+        const sway=Math.sin(j*1.7)*6;kg.beginPath();kg.moveTo(C-w+sway,y+52);kg.quadraticCurveTo(C+sway,y-80,C+w+sway,y+52);kg.quadraticCurveTo(C+w*.96+sway,y+62,C+w*.9+sway,y+58);kg.quadraticCurveTo(C+sway,y+26,C-w*.9+sway,y+58);kg.quadraticCurveTo(C-w*.93+sway,y+58,C-w+sway,y+52);kg.fill()}
+      const wig=Math.sin(a*N*Math.PI*2)*(110-a*70);let pt={x:C+wig,y:C+200-a*N*52,pour:a<1};
+      if(b>0){const y0=C-225,y1=C+250,yy=y0+(y1-y0)*b;kg.beginPath();kg.arc(C,y0+4,18,0,7);kg.fill();kg.beginPath();kg.moveTo(C-5,y0);kg.lineTo(C+5,y0);kg.lineTo(C+1.5,yy);kg.lineTo(C-1.5,yy);kg.fill();pt={x:C,y:yy,pour:b<1,pull:true}}
+      return pt}
+  };
+  // имя: сначала большое сердце-основа, потом бариста пишет палочкой коричневым по белому
+  let NAME='',colY=[];
+  function prepName(t){NAME=t;ig.clearRect(0,0,W,W);let fs=150;const f=s=>`600 italic ${s}px "Playfair Display",Georgia,serif`;ig.font=f(fs);while(ig.measureText(t).width>W*.44&&fs>50){fs-=6;ig.font=f(fs)}
+    ig.textAlign='center';ig.textBaseline='middle';ig.fillStyle='#7A4A28';ig.fillText(t,C,C+20);
+    const d=ig.getImageData(0,0,W,W).data;colY=[];for(let x=0;x<W;x+=4){const ys=[];for(let y=0;y<W;y+=4)if(d[(y*W+x)*4+3]>120)ys.push(y);colY[x>>2]=ys}}
+  let mode='heart',prog=1,running=false,penAt=null;
+  const DUR={heart:3,tulip:4,rosetta:4.4,name:5.2};
+  function compose(){fg.drawImage(crema,0,0);kg.clearRect(0,0,W,W);kg.save();let pt;
+    if(mode==='name'){const a=cl(prog/.32);pt=PAT.heart(a,300);
+      const b=cl((prog-.32)/.68);penAt=null;
+      if(b>0){// проявление букв слева направо — и палочка идёт по строке
+        const xs=colY.map((ys,i)=>ys.length?i:-1).filter(i=>i>=0),x0=(xs[0]||0)*4,x1=(xs[xs.length-1]||0)*4,fx=x0+(x1-x0+20)*b;
+        kg.restore();kg.save();
+        tg.globalCompositeOperation='source-over';tg.clearRect(0,0,W,W);tg.drawImage(ink,0,0);tg.globalCompositeOperation='destination-in';const gr=tg.createLinearGradient(fx-14,0,fx+6,0);gr.addColorStop(0,'#000');gr.addColorStop(1,'rgba(0,0,0,0)');tg.fillStyle=gr;tg.fillRect(0,0,W,W);
+        fg.save();fg.filter='blur(1.4px)';fg.globalAlpha=.9;
+        if(b<1){const ys=colY[Math.round(fx/4)]||[];if(ys.length){const k=Math.floor(((fx/4)%9)/9*ys.length);penAt={x:fx,y:ys[Math.min(ys.length-1,k)]}}}
+        fg.restore();pt={pour:false}}}
+    else pt=PAT[mode](prog);
+    kg.restore();
+    fg.save();fg.filter='blur(1.6px)';fg.shadowColor='rgba(90,50,20,.35)';fg.shadowBlur=8;fg.drawImage(milk,0,0);fg.restore();fg.save();fg.filter='blur(.6px)';fg.drawImage(milk,0,0);fg.restore();
+    if(mode==='name'&&prog>.32){fg.save();fg.filter='blur(1.2px)';fg.globalAlpha=.88;fg.drawImage(inkT,0,0);fg.restore()}
+    const v=fg.createRadialGradient(C,C,C*.8,C,C,C);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(70,35,12,.4)');fg.fillStyle=v;fg.fillRect(0,0,W,W);
+    tex.needsUpdate=true;return pt}
+  // чашка, блюдце
+  const ceramic=new THREE.MeshPhysicalMaterial({color:lin(0xFBF8F3),roughness:.16,clearcoat:1,clearcoatRoughness:.06,envMapIntensity:.9,side:THREE.DoubleSide});
+  const rim=new THREE.MeshPhysicalMaterial({color:lin(0xD9AE8A),roughness:.3,clearcoat:.8});
+  const g=new THREE.Group();scene.add(g);
+  g.add(lathe([[0,.02],[.42,.02],[.5,.08],[.72,.42],[.86,.86],[.9,1.0],[.86,1.0],[.8,.88],[.66,.46],[.44,.14],[0,.12]],ceramic));
+  const band=new THREE.Mesh(new THREE.TorusGeometry(.885,.01,8,96),rim);band.rotation.x=Math.PI/2;band.position.y=.97;g.add(band);
+  const handle=new THREE.Mesh(new THREE.TorusGeometry(.24,.055,16,48,Math.PI*1.15),ceramic);handle.position.set(-.9,.6,0);handle.rotation.z=Math.PI/2+.25;g.add(handle);
+  const RD=.83,surf=new THREE.Mesh(new THREE.CircleGeometry(RD,96),new THREE.MeshStandardMaterial({map:tex,roughness:.5}));surf.rotation.x=-Math.PI/2;surf.position.y=.9;g.add(surf);
+  g.add(lathe([[0,-.06],[.7,-.06],[1.25,0],[1.42,.07],[1.38,.09],[1.2,.03],[.62,.0],[0,.0]],ceramic));
+  const srim=new THREE.Mesh(new THREE.TorusGeometry(1.4,.01,8,128),rim);srim.rotation.x=Math.PI/2;srim.position.y=.08;g.add(srim);
+  // питчер-струя и палочка бариста
+  const pourM=new THREE.MeshPhysicalMaterial({color:lin(0xFFF8EE),roughness:.25,clearcoat:.6});
+  const pour=new THREE.Mesh(new THREE.CylinderGeometry(.03,.024,1,14,1,true),pourM);pour.visible=false;scene.add(pour);
+  const pen=new THREE.Group();const stick=new THREE.Mesh(new THREE.CylinderGeometry(.018,.008,1.3,10),new THREE.MeshPhysicalMaterial({color:lin(0xC9CED3),metalness:1,roughness:.25}));stick.position.y=.65;pen.add(stick);
+  const grip=new THREE.Mesh(new THREE.CylinderGeometry(.03,.03,.45,12),new THREE.MeshStandardMaterial({color:lin(0x8B6A55),roughness:.6}));grip.position.y=1.1;pen.add(grip);pen.rotation.z=-.35;pen.visible=false;scene.add(pen);
+  // пар
+  const SN=36,sp=new Float32Array(SN*3),sl=new Float32Array(SN);for(let i=0;i<SN;i++)sl[i]=Math.random();
+  const sg=new THREE.BufferGeometry();sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+  const sc=document.createElement('canvas');sc.width=sc.height=64;const sx=sc.getContext('2d'),q=sx.createRadialGradient(32,32,0,32,32,32);q.addColorStop(0,'rgba(255,255,255,.6)');q.addColorStop(1,'rgba(255,255,255,0)');sx.fillStyle=q;sx.fillRect(0,0,64,64);
+  const steam=new THREE.Points(sg,new THREE.PointsMaterial({size:.5,map:new THREE.CanvasTexture(sc),transparent:true,opacity:.3,depthWrite:false}));g.add(steam);
+  const shc=document.createElement('canvas');shc.width=shc.height=128;const shx=shc.getContext('2d'),shg=shx.createRadialGradient(64,64,0,64,64,64);shg.addColorStop(0,'rgba(90,60,40,.22)');shg.addColorStop(1,'rgba(90,60,40,0)');shx.fillStyle=shg;shx.fillRect(0,0,128,128);
+  const sh=new THREE.Mesh(new THREE.PlaneGeometry(4,4),new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(shc),transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=-.07;g.add(sh);
+  scene.add(new THREE.HemisphereLight(0xFFF6EA,0xA08670,.65));const key=new THREE.DirectionalLight(0xFFEBD6,1.2);key.position.set(-3,5,4);scene.add(key);
+  cam.position.set(0,3.5,3.6);cam.lookAt(0,.5,0);g.position.y=-.3;
+  s.fit.push(()=>g.scale.setScalar(cam.aspect<.85?.82:1));s.resize();
+  let drag=null,yaw=.5,yawT=.5,tilt=0,tiltT=0;
+  cv.addEventListener('pointerdown',e=>drag={x:e.clientX,y:e.clientY,y0:yawT,t0:tiltT});addEventListener('pointerup',()=>drag=null);
+  addEventListener('pointermove',e=>{if(!drag)return;yawT=drag.y0+(e.clientX-drag.x)*.01;tiltT=cl(drag.t0+(e.clientY-drag.y)*.003,-.25,.35)});
+  const stepEl=document.getElementById('artStep');let stepKey='';
+  const showStep=k=>{if(k===stepKey)return;stepKey=k;stepEl.hidden=!k;if(k)stepEl.textContent=T(k);clearTimeout(showStep.t);if(k==='st_done')showStep.t=setTimeout(()=>{stepEl.hidden=true;stepKey=''},2200)};
+  function start(m,name){mode=m;if(m==='name')prepName(name);prog=still?1:0;running=!still;compose();showStep(still?'st_done':'st_pour')}
+  document.getElementById('artChips').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.dataset.p)start(b.dataset.p)});
+  document.getElementById('artForm').addEventListener('submit',()=>{const v=document.getElementById('artName').value.trim();v?start('name',v.slice(0,10)):start('heart')});
+  if(document.fonts)document.fonts.ready.then(()=>{if(mode==='name')prepName(NAME);compose()});
+  compose();
+  window.__cup={get prog(){return prog},get mode(){return mode},start};
+  const v3=new THREE.Vector3(),top=new THREE.Vector3(),up=new THREE.Vector3(0,1,0);
+  const toWorld=(x,y)=>{v3.set((x/W*2-1)*RD,(1-y/W*2)*RD,0);return surf.localToWorld(v3)};
+  let last=performance.now();
+  (function loop(now){requestAnimationFrame(loop);const dt=Math.min(.1,(now-last)/1000||0);last=now;if(!s.vis)return;
+    yawT+=drag||still||running?0:dt*.1;yaw+=(yawT-yaw)*(1-Math.exp(-dt*6));tilt+=(tiltT-tilt)*(1-Math.exp(-dt*6));g.rotation.y=yaw;g.rotation.x=tilt;surf.rotation.z=-yaw;
+    scene.updateMatrixWorld();
+    let pt={pour:false};
+    if(running){prog=Math.min(1,prog+dt/DUR[mode]);pt=compose();if(prog>=1){running=false;showStep('st_done')}else showStep(mode==='name'&&prog>.32?'st_etch':pt.pull?'st_pull':'st_pour')}
+    pour.visible=running&&pt.pour&&pt.x!=null;
+    if(pour.visible){const w=toWorld(pt.x,pt.y).clone();top.set(w.x*.5,w.y+1.9,w.z*.5);const d=w.clone().sub(top);pour.position.copy(top).add(w).multiplyScalar(.5);pour.scale.set(pt.pull?.55:1,d.length(),pt.pull?.55:1);pour.quaternion.setFromUnitVectors(up,d.normalize())}
+    pen.visible=running&&mode==='name'&&!!penAt;if(pen.visible){const w=toWorld(penAt.x,penAt.y);pen.position.copy(w);pen.rotation.y=-yaw}
+    for(let i=0;i<SN;i++){sl[i]+=still?0:dt*.2;if(sl[i]>1)sl[i]=0;const a=sl[i];sp[i*3]=Math.sin(i*7.1+a*5)*.3*a;sp[i*3+1]=1.0+a*1.6;sp[i*3+2]=Math.cos(i*3.3+a*4)*.3*a}
+    sg.attributes.position.needsUpdate=true;steam.material.opacity=running?.12:.28;r.render(scene,cam)})(performance.now());
+  // показать мастерство сразу: когда чашка впервые видна — бариста наливает сердце
+  new IntersectionObserver(([e],o)=>{if(e.isIntersecting){o.disconnect();setTimeout(()=>start('heart'),500)}},{threshold:.5}).observe(cv);
+}catch(e){if(e)console.error('чашка',e);document.getElementById('cupFb').hidden=false}
+
+/* ---------- 2) 3D-КАРТА ЗАЛА: чётко и спокойно ---------- */
+try{
+  const cv=document.getElementById('c-map'),s=stage(cv,{fov:38});if(!s)throw 0;const {scene,cam,r}=s;r.toneMappingExposure=.92;
+  const cnv=(w,h,d)=>{const c=document.createElement('canvas');c.width=w;c.height=h;d(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;t.userData={c,d};return t};
+  const floorT=cnv(512,512,(g,w,h)=>{g.fillStyle='#E6D8C6';g.fillRect(0,0,w,h);for(let y=0;y<h;y+=32)for(let x=0;x<w;x+=128){const o=(y/32)%2?64:0;g.fillStyle=`hsl(31,${30+Math.random()*6}%,${79+Math.random()*4}%)`;g.fillRect(x+o,y,126,30);g.fillStyle='rgba(120,90,60,.05)';g.fillRect(x+o,y+29,126,1)}});
+  floorT.wrapS=floorT.wrapT=THREE.RepeatWrapping;floorT.repeat.set(3,2);
+  const W=10,D=7;
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(W,D),new THREE.MeshStandardMaterial({map:floorT,roughness:.9}));floor.rotation.x=-Math.PI/2;scene.add(floor);
+  const wallM=new THREE.MeshStandardMaterial({color:lin(0xFFFFFF),roughness:.9});
+  [[0,-D/2,W+.15,.12],[-W/2,0,.12,D],[W/2,0,.12,D],[0,D/2,W+.15,.12]].forEach(([x,z,w,d],i)=>{const m=new THREE.Mesh(new THREE.BoxGeometry(w,i===3?.08:.32,d),wallM);m.position.set(x,i===3?.04:.16,z);scene.add(m)});
+  const win=new THREE.Mesh(new THREE.BoxGeometry(.05,.22,5.4),new THREE.MeshStandardMaterial({color:lin(0xCFE4EE),roughness:.2}));win.position.set(-W/2+.08,.33,0);scene.add(win);
+  // надписи зон на полу
+  const floorLabel=(key,x,z,w=2.4)=>{const t=cnv(512,128,()=>{});const m=new THREE.Mesh(new THREE.PlaneGeometry(w,w/4),new THREE.MeshBasicMaterial({map:t,transparent:true,depthWrite:false}));m.rotation.x=-Math.PI/2;m.position.set(x,.012,z);m.userData.key=key;scene.add(m);return m};
+  const labels=[floorLabel('z_win',-4.15,2.75,2.2),floorLabel('z_sofa',3.9,2.85,1.8)];
+  window.mapLabels=()=>labels.forEach(m=>{const c=m.material.map.image,g=c.getContext('2d');g.clearRect(0,0,512,128);g.font='800 54px Manrope,sans-serif';g.fillStyle='rgba(110,92,80,.8)';g.textAlign='center';g.textBaseline='middle';g.fillText(T(m.userData.key),256,66);m.material.map.needsUpdate=true});
+  mapLabels();
+  // бар
+  const barM=new THREE.MeshStandardMaterial({color:lin(0xD9C2AE),roughness:.6}),topM=new THREE.MeshStandardMaterial({color:lin(0xFFFFFF),roughness:.3});
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(4.6,.5,.65),barM);bar.position.set(1.6,.25,-2.95);scene.add(bar);const bt=new THREE.Mesh(new THREE.BoxGeometry(4.7,.05,.75),topM);bt.position.set(1.6,.52,-2.95);scene.add(bt);
+  const mach=new THREE.Mesh(new THREE.BoxGeometry(.6,.32,.36),new THREE.MeshStandardMaterial({color:lin(0xC08A63),roughness:.35,metalness:.2}));mach.position.set(2.6,.71,-3.02);scene.add(mach);
+  const sprite=(draw,sx,sy)=>{const t=cnv(256,128,draw);const m=new THREE.Sprite(new THREE.SpriteMaterial({map:t,transparent:true,depthTest:false}));m.scale.set(sx,sy,1);return m};
+  const barL=sprite((g,w,h)=>{g.fillStyle='#fff';g.beginPath();g.roundRect?g.roundRect(28,24,200,80,40):g.rect(28,24,200,80);g.fill();g.font='800 52px Manrope,sans-serif';g.fillStyle='#8B7B70';g.textAlign='center';g.textBaseline='middle';g.fillText('BAR',w/2,66)},.9,.45);barL.position.set(-.3,1.0,-2.95);scene.add(barL);
+  const plantM=new THREE.MeshStandardMaterial({color:lin(0xA9C4A3),roughness:.8}),potM=new THREE.MeshStandardMaterial({color:lin(0xFFFFFF)});
+  [[-4.6,-3.1],[4.6,-3.1],[4.6,3.0]].forEach(([x,z])=>{const p=new THREE.Mesh(new THREE.CylinderGeometry(.16,.12,.26,16),potM);p.position.set(x,.13,z);scene.add(p);const l=new THREE.Mesh(new THREE.IcosahedronGeometry(.28,1),plantM);l.position.set(x,.44,z);scene.add(l)});
+  // цвета статуса — столешница целиком
+  const COL={free:lin(0x93BF8C),busy:lin(0xE2DAD2),pick:lin(0xE59B70),mine:lin(0xE9C472)};
+  const chairM=new THREE.MeshStandardMaterial({color:lin(0xB59A85),roughness:.7}),sofaM=new THREE.MeshStandardMaterial({color:lin(0xE2C6B0),roughness:.9});
+  const shadowT=cnv(128,128,(g)=>{const q=g.createRadialGradient(64,64,0,64,64,64);q.addColorStop(0,'rgba(90,60,40,.18)');q.addColorStop(1,'rgba(90,60,40,0)');g.fillStyle=q;g.fillRect(0,0,128,128)});
+  const tables=[];
+  TABLES.forEach(([id,x,z,seats,round,sock,winS,quiet,sofa])=>{const grp=new THREE.Group();grp.position.set(x,0,z);
+    const tw=seats>=6?1.4:seats>=4?1.0:.72,td=seats>=6?.8:.7;
+    const sh=new THREE.Mesh(new THREE.PlaneGeometry(tw*1.6,td*1.8),new THREE.MeshBasicMaterial({map:shadowT,transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=.01;grp.add(sh);
+    const geo=round?new THREE.CylinderGeometry(tw/2,tw/2,.07,40):new THREE.BoxGeometry(tw,.07,td);
+    const mat=new THREE.MeshStandardMaterial({color:COL.free.clone(),roughness:.55});const tt=new THREE.Mesh(geo,mat);tt.position.y=.42;grp.add(tt);
+    const edge=new THREE.LineSegments(new THREE.EdgesGeometry(geo,30),new THREE.LineBasicMaterial({color:lin(0x9E8B7C),transparent:true,opacity:.85}));edge.position.y=.42;grp.add(edge);
+    const leg=new THREE.Mesh(new THREE.CylinderGeometry(.035,.05,.4,8),chairM);leg.position.y=.2;grp.add(leg);
+    if(sofa){const sf=new THREE.Mesh(new THREE.BoxGeometry(1.3,.32,.42),sofaM);sf.position.set(0,.16,-.72);grp.add(sf);const sb=new THREE.Mesh(new THREE.BoxGeometry(1.3,.3,.13),sofaM);sb.position.set(0,.42,-.88);grp.add(sb)}
+    const n=sofa?2:seats;for(let k=0;k<n;k++){const a=sofa?Math.PI/2+(k-.5)*.7:(k/n)*Math.PI*2+Math.PI/4,rr=Math.max(tw,td)/2+.26;const c=new THREE.Mesh(new THREE.BoxGeometry(.26,.26,.26),chairM);c.position.set(Math.cos(a)*rr,.13,Math.sin(a)*rr*(sofa?-1:1)+(sofa?.25:0));grp.add(c)}
+    // номер — белый кружок с цифрой; ⚡ — жёлтый кружок
+    const num=sprite((g,w,h)=>{g.fillStyle='#fff';g.beginPath();g.arc(64,64,48,0,7);g.fill();g.strokeStyle='#E2D6CA';g.lineWidth=4;g.stroke();g.font='800 54px Manrope,sans-serif';g.fillStyle='#4A3B33';g.textAlign='center';g.textBaseline='middle';g.fillText(String(id),64,68);
+      if(sock){g.fillStyle='#FFE9A8';g.beginPath();g.arc(182,64,40,0,7);g.fill();g.font='48px sans-serif';g.fillText('⚡',182,68)}},.84,.42);
+    num.position.set(sock?.2:.42,.95,0);grp.add(num);
+    tt.userData.id=id;grp.userData={id,top:tt,lift:0};scene.add(grp);tables.push(grp)});
+  scene.add(new THREE.HemisphereLight(0xFFFAF3,0xB9A28E,.62));const key=new THREE.DirectionalLight(0xFFF1E2,.55);key.position.set(-3,9,4);scene.add(key);
+  s.fit.push(()=>{const a=cam.aspect;if(a<.9){cam.position.set(5.2,11.5,.01);cam.fov=a<.6?50:44}else{cam.position.set(0,11.2,5.4);cam.fov=40}cam.lookAt(0,0,.1);cam.updateProjectionMatrix()});s.resize();
+  let hover=null;
+  window.mapRecolor=function(){tables.forEach(t=>{const id=t.userData.id;const b=SEL.time==null?true:isBusy(id,SEL.day,SEL.time,SEL.dur);
+    const c=id===SEL.table?COL.pick:b==='mine'?COL.mine:b?COL.busy:COL.free;t.userData.target=c})};
+  mapRecolor();
+  const ray=new THREE.Raycaster(),nd=new THREE.Vector2();
+  const hit=e=>{const rc=cv.getBoundingClientRect();nd.set((e.clientX-rc.left)/rc.width*2-1,-((e.clientY-rc.top)/rc.height*2-1));ray.setFromCamera(nd,cam);const h=ray.intersectObjects(tables.map(t=>t.userData.top))[0];return h&&h.object.userData.id};
+  cv.addEventListener('pointermove',e=>{hover=hit(e)||null;cv.style.cursor=hover?'pointer':'default'});
+  cv.addEventListener('click',e=>{const id=hit(e);if(!id)return;SEL.table=id;renderPick();mapRecolor();if(innerWidth<=960)document.getElementById('pick').scrollIntoView({behavior:still?'auto':'smooth',block:'center'})});
+  window.__map={tables:tables.length,select:id=>{SEL.table=id;renderPick();mapRecolor()}};
+  let last=performance.now();
+  (function loop(now){requestAnimationFrame(loop);const dt=Math.min(.1,(now-last)/1000||0);last=now;if(!s.vis)return;const k=1-Math.exp(-dt*10);
+    tables.forEach(t=>{const u=t.userData,want=(u.id===SEL.table?.14:u.id===hover?.06:0);u.lift+=(want-u.lift)*k;t.position.y=u.lift;if(u.target)u.top.material.color.lerp(u.target,still?1:k)});
+    r.render(scene,cam)})(performance.now());
+}catch(e){if(e)console.error('карта',e)}
+})();
+</script>
+</body>
+</html>
