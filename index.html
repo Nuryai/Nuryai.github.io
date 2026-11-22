@@ -1095,7 +1095,7 @@ const CARPET=(function(){
     if(n>=N){line.querySelectorAll('.sheet').forEach(x=>x.remove());n=0;ui()}
     busy=true;btn.disabled=true;const i=n,title=src[i].querySelector('.k').textContent,big=(src[i].querySelector('h3,.goal,.rules b')||{}).textContent||'NURY';
     let fin=false;const done=()=>{if(fin)return;fin=true;clearTimeout(guard);hang(i);n++;busy=false;btn.disabled=false;ui()};
-    const guard=setTimeout(done,4000);  // страховка: лист появится, даже если анимация остановилась
+    const guard=setTimeout(done,7000);  // страховка: лист появится, даже если анимация остановилась
     if(window.pressAnimate&&!still)pressAnimate(title,big,done);else{SFX.clap();done()}}
   window.pressPrint=print;btn.onclick=print;
   new IntersectionObserver(([e])=>{if(e.isIntersecting&&auto&&n===0)setTimeout(()=>{if(auto&&n===0)print()},still?0:700)},{threshold:.45}).observe(document.getElementById('pressStage'));
@@ -1287,82 +1287,194 @@ try{
   window.__tea={get fill(){return fill}};
 }catch(e){console.error('чайник',e);document.querySelector('.teabox').hidden=true;window.__tea={fill:1}}
 
-/* ---------- 3) ПЕЧАТНЫЙ СТАНОК: валик красит литеры, пресс опускается, выходит оттиск ---------- */
+/* ---------- 3) ПЕЧАТНЫЙ СТАНОК — реалистичный ручной пресс XIX века: литая чугунная рама, каретка на рельсах, тимпан и фрашкет, валик, рычаг ---------- */
 try{
-  const cv=document.getElementById('c-press'),s=stage(cv,{fov:32,z:10});if(!s)throw new Error('webgl');const {scene,cam,r}=s;
+  const cv=document.getElementById('c-press'),s=stage(cv,{fov:28,z:10});if(!s)throw new Error('webgl');const {scene,cam,r}=s;
+  r.shadowMap.enabled=true;r.shadowMap.type=THREE.PCFSoftShadowMap;r.toneMappingExposure=1.05;
   if(THREE.RoomEnvironment)scene.environment=new THREE.PMREMGenerator(r).fromScene(new THREE.RoomEnvironment(),.04).texture;
-  const cnv=(w,h,d)=>{const c=document.createElement('canvas');c.width=w;c.height=h;d(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);t.encoding=THREE.sRGBEncoding;t.anisotropy=8;t.userData={c};return t};
-  const iron=new THREE.MeshStandardMaterial({color:lin(0x2C2C32),metalness:.75,roughness:.36,envMapIntensity:.9});
-  const brass=new THREE.MeshStandardMaterial({color:lin(0xC9963B),metalness:1,roughness:.24});
-  const red=new THREE.MeshStandardMaterial({color:lin(0x8A1016),metalness:.35,roughness:.5});
-  const rubber=new THREE.MeshStandardMaterial({color:lin(0x151518),roughness:.55,metalness:.1});
-  const B=(w,h,d,m,x=0,y=0,z=0)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);o.position.set(x,y,z);return o};
-  const g=new THREE.Group();scene.add(g);
-  // станина, стойки, перекладина
-  g.add(B(3.6,.32,2.0,iron,0,.16,0));g.add(B(3.64,.035,2.04,red,0,.33,0));
-  // боковины — по две колонны, чтобы механизм было видно
-  [-1.68,1.68].forEach(x=>{[-.55,.55].forEach(z=>{g.add(B(.22,2.62,.22,iron,x,1.62,z));g.add(B(.3,.08,.3,brass,x,.4,z))});g.add(B(.26,.22,1.36,iron,x,2.86,0));g.add(B(.3,.06,1.44,brass,x,3.0,0));g.add(B(.24,.12,1.3,iron,x,1.15,0))});
-  g.add(B(3.75,.36,.62,iron,0,2.78,0));
-  // литеры: зеркальное NURY на металлической форме; после валика — в краске
-  const typeT=cnv(512,280,(c,w,h)=>{c.fillStyle='#6f7176';c.fillRect(0,0,w,h);for(let y=0;y<h;y+=20)for(let x=0;x<w;x+=20){c.fillStyle=`rgba(255,255,255,${.04+Math.random()*.05})`;c.fillRect(x+1,y+1,18,18)}
-    c.save();c.translate(w,0);c.scale(-1,1);c.font='900 150px Unbounded,Arial Black,sans-serif';c.textAlign='center';c.textBaseline='middle';c.fillStyle='#c9ccd2';c.fillText('NURY',w/2,h/2+8);c.restore()});
-  const typeM=new THREE.MeshStandardMaterial({map:typeT,metalness:.8,roughness:.35});
-  const form=new THREE.Mesh(new THREE.BoxGeometry(2.2,.08,1.2),typeM);form.position.set(0,.4,0);g.add(form);
-  // пресс-плита и винт с рычагом
-  const platen=new THREE.Group();platen.add(B(2.4,.18,1.32,iron));platen.add(B(2.46,.05,1.38,red,0,-.1,0));g.add(platen);
-  const screw=new THREE.Mesh(new THREE.CylinderGeometry(.075,.075,1,16),brass);g.add(screw);
-  const lever=new THREE.Group();lever.position.set(0,3.08,0);
-  lever.add(new THREE.Mesh(new THREE.CylinderGeometry(.14,.14,.16,24),brass));
-  const bar=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,2.8,12),iron);bar.rotation.z=Math.PI/2;lever.add(bar);
-  [-1.4,1.4].forEach(x=>{const b=new THREE.Mesh(new THREE.SphereGeometry(.12,20,14),brass);b.position.x=x;lever.add(b)});g.add(lever);
-  // валик с ручками
-  const roller=new THREE.Group();const rc=new THREE.Mesh(new THREE.CylinderGeometry(.14,.14,1.36,32),rubber);rc.rotation.x=Math.PI/2;roller.add(rc);
-  [-.74,.74].forEach(z=>{const h=new THREE.Mesh(new THREE.CylinderGeometry(.04,.04,.18,12),brass);h.rotation.x=Math.PI/2;h.position.z=z;roller.add(h)});g.add(roller);
-  // бумага: сначала чистая, после пресса — с оттиском
-  const paperT=cnv(512,300,(c,w,h)=>{c.fillStyle='#F3ECDF';c.fillRect(0,0,w,h)});
-  const paperM=new THREE.MeshStandardMaterial({map:paperT,roughness:.9,transparent:true,side:THREE.DoubleSide});
-  const paper=new THREE.Mesh(new THREE.PlaneGeometry(2.0,1.17),paperM);paper.rotation.x=-Math.PI/2;g.add(paper);
-  function printPaper(title,big){const c=paperT.userData.c,x=c.getContext('2d');x.fillStyle='#F3ECDF';x.fillRect(0,0,512,300);
-    x.fillStyle='#B3121A';x.font='700 22px Inter,Arial,sans-serif';x.fillText(title.toUpperCase().slice(0,32),28,44);
-    x.fillStyle='#1A1414';x.font='900 52px Unbounded,Arial Black,sans-serif';x.fillText(String(big).slice(0,14),26,118);
-    x.fillStyle='#1A141455';for(let i=0;i<6;i++)x.fillRect(28,150+i*22,330+Math.random()*120,9);paperT.needsUpdate=true}
-  function blankPaper(){const x=paperT.userData.c.getContext('2d');x.fillStyle='#F3ECDF';x.fillRect(0,0,512,300);paperT.needsUpdate=true}
-  // свет
-  scene.add(new THREE.HemisphereLight(0xFFF1DC,0x1a0d0d,.5));const key=new THREE.DirectionalLight(0xFFE6C4,1.3);key.position.set(-3,6,5);scene.add(key);
-  const rim=new THREE.PointLight(0xFF3B2F,1.1,14);rim.position.set(3,1,-2);scene.add(rim);
-  const sh=new THREE.Mesh(new THREE.PlaneGeometry(6,3.4),new THREE.MeshBasicMaterial({map:cnv(256,128,(c,w,h)=>{const q=c.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);q.addColorStop(0,'rgba(0,0,0,.6)');q.addColorStop(1,'rgba(0,0,0,0)');c.fillStyle=q;c.fillRect(0,0,w,h)}),transparent:true,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=-.01;g.add(sh);
-  s.fit.push(()=>{const a=cam.aspect;g.scale.setScalar(a<.9?.72:a<1.3?.86:1)});
-  cam.position.set(4.6,4.3,6.4);cam.lookAt(0,1.25,0);s.resize();
-  // состояние анимации
-  const UP=2.12,DOWN=.62;let job=null,shake=0,yaw=-.35,yawT=-.35;
-  const place=(pl)=>{platen.position.y=pl;screw.position.y=(pl+2.6)/2;screw.scale.y=Math.max(.05,2.6-pl)};
-  place(UP);roller.position.set(-1.55,.6,0);paper.position.set(0,.47,2.9);paperM.opacity=0;
-  window.pressAnimate=(title,big,done)=>{job={t:0,title,big,done,inked:false,printed:false,thump:false};blankPaper();paperM.opacity=1;paper.position.set(0,.47,2.9);typeM.color.set(0xffffff)};
-  // крутить пальцем / мышкой; короткое нажатие — печать
-  let drag=null;cv.addEventListener('pointerdown',e=>drag={x:e.clientX,y0:yawT,moved:0});
-  addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;drag.moved=Math.max(drag.moved,Math.abs(dx));yawT=drag.y0+dx*.008});
-  addEventListener('pointerup',()=>{if(drag&&drag.moved<6&&window.pressPrint)pressPrint();drag=null});
+  const rnd=(a,b)=>a+Math.random()*(b-a);
+  const cnv=(w,h,d,srgb=true)=>{const c=document.createElement('canvas');c.width=w;c.height=h;d(c.getContext('2d'),w,h);const t=new THREE.CanvasTexture(c);if(srgb)t.encoding=THREE.sRGBEncoding;t.anisotropy=8;t.userData={c};return t};
+  const M=o=>new THREE.MeshStandardMaterial(o);
+  // шероховатость металла: пятна и царапины
+  const noiseT=cnv(256,256,(c,w,h)=>{c.fillStyle='#808080';c.fillRect(0,0,w,h);for(let i=0;i<1400;i++){const v=rnd(80,180)|0;c.fillStyle=`rgba(${v},${v},${v},.35)`;c.beginPath();c.arc(rnd(0,w),rnd(0,h),rnd(1,6),0,7);c.fill()}
+    c.strokeStyle='rgba(30,30,30,.55)';c.lineWidth=.7;for(let i=0;i<70;i++){const x=rnd(0,w),y=rnd(0,h),a=rnd(0,6.3),l=rnd(8,40);c.beginPath();c.moveTo(x,y);c.lineTo(x+Math.cos(a)*l,y+Math.sin(a)*l);c.stroke()}},false);
+  noiseT.wrapS=noiseT.wrapT=THREE.RepeatWrapping;noiseT.repeat.set(2,2);
+  const paint=M({color:lin(0x18181B),metalness:.55,roughness:.5,roughnessMap:noiseT,envMapIntensity:.8});   // крашеный чугун
+  const steel=M({color:lin(0x9A9CA1),metalness:1,roughness:.3,roughnessMap:noiseT});                     // шлифованная сталь
+  const dsteel=M({color:lin(0x4A4C50),metalness:1,roughness:.42,roughnessMap:noiseT});                   // тёмная сталь (рама формы)
+  const brass=M({color:lin(0xA8803A),metalness:1,roughness:.36,roughnessMap:noiseT});                     // старая латунь
+  const woodT=cnv(64,256,(c,w,h)=>{c.fillStyle='#5A3720';c.fillRect(0,0,w,h);for(let i=0;i<34;i++){c.strokeStyle=`rgba(${rnd(15,50)|0},${rnd(8,25)|0},4,${rnd(.15,.45)})`;c.lineWidth=rnd(.5,2.5);c.beginPath();const x0=rnd(0,w);c.moveTo(x0,0);for(let y=0;y<=h;y+=16)c.lineTo(x0+Math.sin(y*.04+i)*rnd(1,3),y);c.stroke()}});
+  const wood=M({map:woodT,roughness:.55,metalness:0});
+  const rubber=M({color:lin(0x0D0D0F),roughness:.22,metalness:0});
+  // скруглённый брусок (у литья нет острых углов)
+  const rrect=(w,h,q)=>{const p=new THREE.Shape(),x=-w/2,y=-h/2;p.moveTo(x+q,y);p.lineTo(x+w-q,y);p.quadraticCurveTo(x+w,y,x+w,y+q);p.lineTo(x+w,y+h-q);p.quadraticCurveTo(x+w,y+h,x+w-q,y+h);p.lineTo(x+q,y+h);p.quadraticCurveTo(x,y+h,x,y+h-q);p.lineTo(x,y+q);p.quadraticCurveTo(x,y,x+q,y);return p};
+  const RB=(w,h,d,m,x=0,y=0,z=0,b=.02)=>{b=Math.min(b,w/4,h/4,d/4);const geo=new THREE.ExtrudeGeometry(rrect(w-2*b,h-2*b,b*.8),{depth:d-2*b,bevelEnabled:true,bevelThickness:b,bevelSize:b,bevelSegments:3,curveSegments:4});geo.translate(0,0,-(d-2*b)/2);const o=new THREE.Mesh(geo,m);o.position.set(x,y,z);o.castShadow=o.receiveShadow=true;return o};
+  const CY=(r1,r2,h,m,seg=24)=>{const o=new THREE.Mesh(new THREE.CylinderGeometry(r1,r2,h,seg),m);o.castShadow=o.receiveShadow=true;return o};
+  const at=(o,x,y,z)=>{o.position.set(x,y,z);return o};
+  const g=new THREE.Group();scene.add(g);const P=new THREE.Group();P.position.set(0,0,-1.1);g.add(P);
+
+  // ----- литая рама (staple): одна чугунная деталь с аркой и окном -----
+  const traceOuter=(o,X,Y)=>{o.moveTo(X(-1.38),Y(0));o.lineTo(X(-1.38),Y(.1));o.quadraticCurveTo(X(-1.06),Y(.16),X(-1.04),Y(.58));o.lineTo(X(-1.04),Y(2.72));o.bezierCurveTo(X(-1.04),Y(3.42),X(-.5),Y(3.6),X(0),Y(3.6));o.bezierCurveTo(X(.5),Y(3.6),X(1.04),Y(3.42),X(1.04),Y(2.72));o.lineTo(X(1.04),Y(.58));o.quadraticCurveTo(X(1.06),Y(.16),X(1.38),Y(.1));o.lineTo(X(1.38),Y(0));o.lineTo(X(-1.38),Y(0))};
+  const traceWin=(o,X,Y)=>{o.moveTo(X(-.78),Y(.62));o.lineTo(X(.78),Y(.62));o.lineTo(X(.78),Y(2.3));o.bezierCurveTo(X(.78),Y(2.62),X(.5),Y(2.66),X(0),Y(2.66));o.bezierCurveTo(X(-.5),Y(2.66),X(-.78),Y(2.62),X(-.78),Y(2.3));o.lineTo(X(-.78),Y(.62))};
+  const id=v=>v,st=new THREE.Shape();traceOuter(st,id,id);const wp=new THREE.Path();traceWin(wp,id,id);st.holes.push(wp);
+  const SC=200,TX=x=>(x+1.4)*SC,TY=y=>(3.7-y)*SC;
+  const liningT=cnv(560,740,(c,w,h)=>{const base='#1b1b1f';c.fillStyle=base;c.fillRect(0,0,w,h);
+    for(let i=0;i<900;i++){const v=rnd(18,42)|0;c.fillStyle=`rgba(${v},${v},${v+3},.5)`;c.beginPath();c.arc(rnd(0,w),rnd(0,h),rnd(1,5),0,7);c.fill()}
+    c.save();c.beginPath();traceOuter(c,TX,TY);c.clip();c.lineJoin='round';const gold='#B8903F';
+    c.beginPath();traceOuter(c,TX,TY);c.strokeStyle=gold;c.lineWidth=34;c.stroke();c.strokeStyle=base;c.lineWidth=29;c.stroke();
+    c.beginPath();traceWin(c,TX,TY);c.strokeStyle=gold;c.lineWidth=34;c.stroke();c.strokeStyle=base;c.lineWidth=29;c.stroke();
+    for(let i=0;i<14;i++){const q=c.createRadialGradient(0,0,0,0,0,30);q.addColorStop(0,'rgba(110,110,116,.28)');q.addColorStop(1,'rgba(110,110,116,0)');c.save();c.translate(TX(rnd(-1,1)),TY(rnd(.3,.9)));c.fillStyle=q;c.fillRect(-30,-30,60,60);c.restore()}  // потёртости внизу
+    c.restore()});
+  liningT.repeat.set(1/2.8,1/3.7);liningT.offset.set(.5,0);
+  const frontM=M({map:liningT,metalness:.55,roughness:.48,roughnessMap:noiseT,envMapIntensity:.8});
+  const stGeo=new THREE.ExtrudeGeometry(st,{depth:.42,bevelEnabled:true,bevelThickness:.04,bevelSize:.035,bevelSegments:4,curveSegments:28});stGeo.translate(0,0,-.21);
+  const frame=new THREE.Mesh(stGeo,[frontM,paint]);frame.castShadow=frame.receiveShadow=true;P.add(frame);
+  const headT=cnv(700,300,(c,w)=>{c.fillStyle='#C9A24E';c.textAlign='center';c.font='700 92px Georgia,"Times New Roman",serif';c.fillText('NURY  AI',w/2,128);c.font='600 30px Georgia,serif';c.fillText('A S H G A B A T   ·   M M X X V I',w/2,200);c.fillRect(w/2-140,232,280,3)});
+  P.add(at(new THREE.Mesh(new THREE.PlaneGeometry(1.4,.6),M({map:headT,transparent:true,metalness:.9,roughness:.35,polygonOffset:true,polygonOffsetFactor:-2})),0,2.97,.252));
+  // пружинная коробка сверху, болты
+  P.add(at(CY(.2,.22,.3,paint,32),0,3.78,0));P.add(at(CY(.225,.225,.03,brass,32),0,3.66,0));P.add(at(CY(.215,.215,.03,brass,32),0,3.9,0));
+  const dome=new THREE.Mesh(new THREE.SphereGeometry(.2,32,12,0,Math.PI*2,0,Math.PI/2),paint);dome.scale.y=.55;dome.castShadow=true;P.add(at(dome,0,3.93,0));
+  P.add(at(new THREE.Mesh(new THREE.SphereGeometry(.045,16,10),brass),0,4.06,0));
+  [[-.62,2.86],[.62,2.86],[-.92,.38],[.92,.38],[-.92,2.3],[.92,2.3]].forEach(([x,y])=>{const b=new THREE.Mesh(new THREE.SphereGeometry(.035,12,8,0,Math.PI*2,0,Math.PI/2),steel);b.rotation.x=Math.PI/2;P.add(at(b,x,y,.25))});
+
+  // ----- рельсы, рёбра, точёные ножки -----
+  const legPts=[[0,0],[.11,0],[.11,.05],[.08,.08],[.055,.2],[.075,.3],[.05,.4],[.05,.48],[.08,.52],[.08,.58],[0,.58]].map(([a,b])=>new THREE.Vector2(a,b));
+  const legGeo=new THREE.LatheGeometry(legPts,24);
+  const leg=(x,z,sy=1)=>{const o=new THREE.Mesh(legGeo,paint);o.scale.y=sy;o.castShadow=o.receiveShadow=true;P.add(at(o,x,0,z))};
+  [-.55,.55].forEach(x=>{P.add(RB(.1,.1,4.5,steel,x,.67,1.1,.015));P.add(RB(.08,.18,3.1,paint,x,.53,1.8));P.add(RB(.08,.18,.9,paint,x,.53,-.7));leg(x,3.15);leg(x,-1.1)});
+  P.add(RB(1.2,.08,.08,paint,0,.5,3.2));P.add(RB(1.2,.08,.08,paint,0,.5,-1.1));
+
+  // ----- каретка: плита, рама формы, литеры -----
+  const bed=new THREE.Group();bed.position.y=.72;P.add(bed);
+  bed.add(RB(1.42,.12,1.7,paint,0,.06,0,.025));bed.add(RB(1.3,.02,1.6,steel,0,.125,0,.006));
+  [[0,-.42,1.22,.06],[0,.42,1.22,.06]].forEach(([x,z,w,d])=>bed.add(RB(w,.04,d,dsteel,x,.155,z,.008)));
+  [-.58,.58].forEach(x=>bed.add(RB(.06,.04,.9,dsteel,x,.155,0,.008)));
+  const FW=1.06,FD=.74,SX=212,SZ=148;
+  const formG=new THREE.PlaneGeometry(FW,FD,SX,SZ);formG.rotateX(-Math.PI/2);
+  const fpos=formG.attributes.position,fN=fpos.count,fcol=new Float32Array(fN*3);formG.setAttribute('color',new THREE.BufferAttribute(fcol,3));
+  const typeM=M({vertexColors:true,metalness:.8,roughness:.36});
+  const form=new THREE.Mesh(formG,typeM);form.castShadow=form.receiveShadow=true;form.position.y=.135;bed.add(form);
+  const LEAD=[.42,.43,.46],BODY=[.2,.2,.22],LOW=[.04,.04,.045],INK=[.006,.006,.008];let tops=[],topZ=[],ink=new Float32Array(0);
+  function buildForm(){const W=424,H=296,c=document.createElement('canvas');c.width=W;c.height=H;const x=c.getContext('2d');x.fillStyle='#000';x.fillRect(0,0,W,H);
+    x.save();x.translate(W,0);x.scale(-1,1);  // литеры зеркальные — как в настоящей типографии
+    const row=(txt,font,y,body)=>{x.font=font;x.textBaseline='middle';x.textAlign='left';const ch=[...txt],ws=ch.map(k=>x.measureText(k).width),tot=ws.reduce((a,b)=>a+b,0);let px=W/2-tot/2;
+      ch.forEach((k,i)=>{x.fillStyle='#666';x.fillRect(px+1,y-body/2,ws[i]-2,body);px+=ws[i]});px=W/2-tot/2;x.fillStyle='#fff';ch.forEach((k,i)=>{x.fillText(k,px,y);px+=ws[i]})};
+    row('NURY','900 124px Unbounded,"Arial Black",sans-serif',112,138);row('ASHGABAT · 2026','700 32px Inter,Arial,sans-serif',232,40);x.restore();
+    const b=document.createElement('canvas');b.width=W;b.height=H;const bx=b.getContext('2d');bx.filter='blur(1px)';bx.drawImage(c,0,0);const d=bx.getImageData(0,0,W,H).data;
+    tops=[];topZ=[];
+    for(let iz=0;iz<=SZ;iz++)for(let ix=0;ix<=SX;ix++){const i=iz*(SX+1)+ix,px=Math.round(ix/SX*(W-1)),py=Math.round(iz/SZ*(H-1)),h=d[(py*W+px)*4]/255,edge=!ix||!iz||ix===SX||iz===SZ;
+      fpos.setY(i,edge?0:.012+h*.036);fcol.set(h>.7?LEAD:h>.25?BODY:LOW,i*3);if(h>.7&&!edge){tops.push(i);topZ.push(fpos.getZ(i))}}
+    fpos.needsUpdate=true;formG.computeVertexNormals();formG.attributes.color.needsUpdate=true;ink=new Float32Array(tops.length)}
+  function paintInk(){for(let k=0;k<tops.length;k++){const a=ink[k],i=tops[k]*3;for(let j=0;j<3;j++)fcol[i+j]=LEAD[j]+(INK[j]-LEAD[j])*a}formG.attributes.color.needsUpdate=true}
+  buildForm();if(document.fonts&&document.fonts.ready)document.fonts.ready.then(buildForm);
+
+  // ----- тимпан (рамка с пергаментом) и фрашкет (маска), на петлях -----
+  const TL=1.3,TW=1.3;const tymp=new THREE.Group();tymp.position.set(0,.215,-.85);bed.add(tymp);
+  [-TW/2,TW/2].forEach(x=>tymp.add(RB(.04,.03,TL,steel,x,0,TL/2,.008)));tymp.add(RB(TW,.03,.04,steel,0,0,.02,.008));tymp.add(RB(TW,.03,.04,steel,0,0,TL-.02,.008));
+  [-.5,.5].forEach(x=>{const hg=CY(.025,.025,.12,brass,12);hg.rotation.z=Math.PI/2;tymp.add(at(hg,x,0,0))});
+  const parchT=cnv(256,256,(c,w,h)=>{c.fillStyle='#C2AA7C';c.fillRect(0,0,w,h);for(let i=0;i<500;i++){c.fillStyle=`rgba(110,80,35,${rnd(.02,.08)})`;c.fillRect(rnd(0,w),rnd(0,h),rnd(1,30),rnd(1,2))}});
+  const parch=new THREE.Mesh(new THREE.PlaneGeometry(TW-.05,TL-.05),M({map:parchT,roughness:.85,side:THREE.DoubleSide}));parch.rotation.x=Math.PI/2;parch.castShadow=parch.receiveShadow=true;tymp.add(at(parch,0,0,TL/2));
+  const frisk=new THREE.Group();frisk.position.set(0,-.03,TL);tymp.add(frisk);
+  [-TW/2+.02,TW/2-.02].forEach(x=>frisk.add(RB(.025,.02,TL-.04,steel,x,0,-(TL-.04)/2,.006)));frisk.add(RB(TW-.04,.02,.025,steel,0,0,-(TL-.04),.006));
+  const FH=TL-.04,maskT=cnv(256,256,(c,w,h)=>{c.fillStyle='#B59A6E';c.fillRect(0,0,w,h);for(let i=0;i<300;i++){c.fillStyle=`rgba(80,55,25,${rnd(.03,.1)})`;c.fillRect(rnd(0,w),rnd(0,h),rnd(1,20),1)}
+    const v=.5+(.85-TL+FH/2)/FH,hw=.94/(TW-.04)*w,hh=.66/FH*h;c.clearRect(w/2-hw/2,(1-v)*h-hh/2,hw,hh)});
+  const mask=new THREE.Mesh(new THREE.PlaneGeometry(TW-.04,FH),M({map:maskT,alphaTest:.5,transparent:true,roughness:.9,side:THREE.DoubleSide}));mask.rotation.x=Math.PI/2;mask.castShadow=true;frisk.add(at(mask,0,.004,-FH/2));
+  // лист бумаги
+  const paperT=cnv(600,430,()=>{});const paperM=M({map:paperT,roughness:.92,transparent:true,side:THREE.DoubleSide});
+  const paper=new THREE.Mesh(new THREE.PlaneGeometry(.98,.7),paperM);paper.castShadow=true;
+  function blankPaper(){const x=paperT.userData.c.getContext('2d');x.fillStyle='#EFE6D2';x.fillRect(0,0,600,430);for(let i=0;i<700;i++){x.fillStyle=`rgba(120,95,60,${rnd(.03,.09)})`;x.fillRect(rnd(0,600),rnd(0,430),rnd(1,6),rnd(.5,1.5))}paperT.needsUpdate=true}
+  function printPaper(title,big){blankPaper();const o=document.createElement('canvas');o.width=600;o.height=430;const q=o.getContext('2d');
+    q.fillStyle='#B3121A';q.font='700 24px Inter,Arial,sans-serif';q.fillText(String(title).toUpperCase().slice(0,34),40,62);
+    q.fillStyle='#141012';let fs=76;const tx=String(big).slice(0,18),f=()=>q.font=`900 ${fs}px Unbounded,"Arial Black",sans-serif`;f();while(q.measureText(tx).width>520&&fs>30){fs-=4;f()}q.fillText(tx,38,170);
+    q.font='500 20px Inter,Arial,sans-serif';q.fillStyle='#2a2224';['NURY AI · ASHGABAT','VIDEO · WEB · 3D · BOTS'].forEach((l,i)=>q.fillText(l,40,245+i*32));q.fillRect(40,330,520,2);q.font='700 15px Inter,Arial,sans-serif';q.fillText('№ '+(Math.random()*900+100|0)+' — 2026',40,370);
+    q.globalCompositeOperation='destination-out';for(let i=0;i<2600;i++){q.fillStyle=`rgba(0,0,0,${rnd(.1,.6)})`;q.fillRect(rnd(0,600),rnd(0,430),rnd(.5,2),rnd(.5,2))}  // неровная краска, как у высокой печати
+    const x=paperT.userData.c.getContext('2d');x.globalCompositeOperation='multiply';x.drawImage(o,0,0);x.globalCompositeOperation='source-over';paperT.needsUpdate=true}
+  const paperHome=()=>{tymp.add(paper);paper.position.set(0,-.018,.85);paper.rotation.set(Math.PI/2,0,0);paper.scale.set(1,1,1)};paperHome();blankPaper();
+
+  // ----- пресс-плита, поршень, рычаг -----
+  const platen=new THREE.Group();P.add(platen);
+  platen.add(RB(1.22,.14,1.0,paint,0,.09,0,.025));platen.add(RB(1.18,.025,.96,steel,0,.012,0,.006));
+  [-.4,0,.4].forEach(x=>platen.add(RB(.06,.1,.9,paint,x,.2,0,.015)));platen.add(at(CY(.16,.26,.14,paint,32),0,.23,0));platen.add(at(CY(.105,.105,1.4,steel,24),0,1.0,0));
+  P.add(at(CY(.16,.16,.12,brass,32),0,2.6,0));
+  P.add(at(CY(.05,.05,.3,steel,16),.12,2.1,.42));P.add(RB(.16,.07,.42,paint,.06,2.1,.22,.015));
+  const bar=new THREE.Group();bar.position.set(.12,2.1,.42);P.add(bar);
+  const curve=new THREE.CatmullRomCurve3([[0,0,0],[.55,0,0],[1.15,.01,.03],[1.5,-.03,.2],[1.62,-.07,.46]].map(a=>new THREE.Vector3(...a)));
+  const bt=new THREE.Mesh(new THREE.TubeGeometry(curve,48,.032,12),steel);bt.castShadow=true;bar.add(bt);bar.add(CY(.075,.075,.1,brass,24));
+  const grip=CY(.048,.04,.36,wood,16);grip.rotation.x=Math.PI/2;bar.add(at(grip,1.64,-.075,.66));
+  const fer=CY(.052,.052,.05,brass,16);fer.rotation.x=Math.PI/2;bar.add(at(fer,1.63,-.072,.48));
+
+  // ----- рукоять каретки (рашкет) -----
+  P.add(RB(.08,.16,.14,paint,.64,.55,1.55));
+  const rounce=new THREE.Group();rounce.position.set(.95,.58,1.55);P.add(rounce);
+  const rax=CY(.035,.035,.7,steel,12);rax.rotation.z=Math.PI/2;rounce.add(rax);rounce.add(RB(.05,.42,.06,paint,.33,.17,0,.012));
+  const rh=CY(.045,.04,.26,wood,14);rh.rotation.z=Math.PI/2;rounce.add(at(rh,.48,.36,0));
+
+  // ----- столик с краской и валик -----
+  P.add(RB(.9,.05,.62,wood,-1.45,.87,2.45,.012));P.add(RB(.5,.04,.05,paint,-.82,.8,2.45,.01));leg(-1.45,2.45,1.46);
+  const inkT=cnv(256,160,(c,w,h)=>{c.fillStyle='#0b0b0c';c.fillRect(0,0,w,h);for(let i=0;i<40;i++){c.fillStyle=`rgba(255,255,255,${rnd(.02,.07)})`;c.fillRect(rnd(0,w),rnd(0,h),rnd(30,120),rnd(2,6))}});
+  P.add(RB(.7,.015,.44,M({map:inkT,roughness:.15,metalness:.2}),-1.45,.902,2.45,.004));
+  const brayer=new THREE.Group(),spin=new THREE.Group();brayer.add(spin);P.add(brayer);
+  const rl=CY(.065,.065,.8,rubber,32);rl.rotation.z=Math.PI/2;spin.add(rl);
+  const bax=CY(.014,.014,1.06,steel,10);bax.rotation.z=Math.PI/2;brayer.add(bax);
+  [-1,1].forEach(sg=>{const hd=CY(.03,.026,.22,wood,14);hd.rotation.z=Math.PI/2;brayer.add(at(hd,sg*.64,0,0));const fr=CY(.035,.035,.03,brass,14);fr.rotation.z=Math.PI/2;brayer.add(at(fr,sg*.52,0,0))});
+
+  // ----- пол мастерской -----
+  const floorT=cnv(512,512,(c,w)=>{for(let i=0;i<8;i++){c.fillStyle=`hsl(24,${rnd(22,32)}%,${rnd(16,22)}%)`;c.fillRect(0,i*64,w,64);for(let k=0;k<26;k++){c.strokeStyle=`rgba(0,0,0,${rnd(.05,.2)})`;c.beginPath();const y=i*64+rnd(0,64);c.moveTo(0,y);c.bezierCurveTo(w/3,y+rnd(-4,4),w*2/3,y+rnd(-4,4),w,y);c.stroke()}c.fillStyle='rgba(0,0,0,.65)';c.fillRect(0,i*64,w,2)}});
+  floorT.wrapS=floorT.wrapT=THREE.RepeatWrapping;floorT.repeat.set(2,2);
+  const fadeT=cnv(256,256,(c,w,h)=>{const q=c.createRadialGradient(w/2,h/2,0,w/2,h/2,w/2);q.addColorStop(0,'#fff');q.addColorStop(.5,'#fff');q.addColorStop(1,'#000');c.fillStyle=q;c.fillRect(0,0,w,h)},false);
+  const floor=new THREE.Mesh(new THREE.PlaneGeometry(9,9),M({map:floorT,alphaMap:fadeT,transparent:true,roughness:.8,depthWrite:false}));floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;P.add(at(floor,0,0,1.1));
+
+  // ----- свет: тёплая лампа мастерской, холодный контровой -----
+  scene.add(new THREE.HemisphereLight(0xFFE9D0,0x0c0806,.35));
+  const key=new THREE.SpotLight(0xFFD7A8,1.7,0,.85,1,1);key.position.set(-3.5,7.5,5);key.castShadow=true;key.shadow.mapSize.set(1024,1024);key.shadow.bias=-.0005;key.shadow.camera.near=4;key.shadow.camera.far=18;scene.add(key);scene.add(key.target);
+  const rim=new THREE.DirectionalLight(0x9DB4FF,.5);rim.position.set(3,4,-5);scene.add(rim);
+  const warm=new THREE.PointLight(0xFF6A3D,.5,9);warm.position.set(2.6,1.3,2.6);scene.add(warm);
+  s.fit.push(()=>{const a=cam.aspect;g.scale.setScalar(a<.9?.6:a<1.3?.74:.8)});
+  cam.position.set(4.7,3.4,7.4);cam.lookAt(0,1.45,0);s.resize();
+
+  // ----- цикл печати -----
+  const Z_OUT=2.1,T_OPEN=-1.9,F_OPEN=-2.6,BAR0=.08,BAR1=-.62,PL_UP=1.05,PL_DN=.957,ROLL_Y=.968,BR0=new THREE.Vector3(-1.45,.982,2.45),bp=new THREE.Vector3(),pv=new THREE.Vector3(),pq=new THREE.Quaternion();
   const E=x=>x<0?0:x>1?1:x,io=x=>x<.5?2*x*x:1-Math.pow(-2*x+2,2)/2;
-  let last=performance.now();
+  const pose=(zb,tf,ff,b,pl)=>{bed.position.z=zb;rounce.rotation.x=-zb*2.4;tymp.rotation.x=tf;frisk.rotation.x=ff;bar.rotation.y=b;platen.position.y=pl};
+  const idle=()=>{pose(Z_OUT,T_OPEN,F_OPEN,BAR0,PL_UP);brayer.position.copy(BR0);paperHome();paperM.opacity=0};idle();
+  let job=null,shake=0,yawU=0,yaw=0;
+  window.pressAnimate=(title,big,done)=>{idle();blankPaper();job={t:0,title,big,done}};
+  const finish=()=>{const d=job&&job.done;job=null;idle();d&&d()};
+  let drag=null;cv.addEventListener('pointerdown',e=>drag={x:e.clientX,y0:yawU,moved:0});
+  addEventListener('pointermove',e=>{if(!drag)return;const dx=e.clientX-drag.x;drag.moved=Math.max(drag.moved,Math.abs(dx));yawU=Math.max(-1.3,Math.min(1.3,drag.y0+dx*.007))});
+  addEventListener('pointerup',()=>{if(drag&&drag.moved<6&&window.pressPrint)pressPrint();drag=null});
+  let last=performance.now(),T=0;
   (function loop(now){requestAnimationFrame(loop);const dt=Math.min(.1,(now-last)/1000||0);last=now;
-    if(!s.vis){if(job){const d=job.done;job=null;place(UP);paperM.opacity=0;typeM.color.set(0xffffff);d&&d()}return}  // станок ушёл с экрана — допечатываем сразу
-    if(job){const t=(job.t+=dt);
-      // 0–.6 валик красит литеры
-      roller.position.x=-1.55+3.1*io(E(t/.6));rc.rotation.y=-roller.position.x*3;roller.position.y=.6;
-      if(t>.3&&!job.inked){job.inked=true;typeM.color.copy(lin(0xFF9A9A))}
-      if(t>.6)roller.position.x=-1.55+3.1*(1-io(E((t-.6)/.4)));
-      // .6–1.1 бумага заезжает
-      paper.position.z=2.9-2.9*io(E((t-.6)/.5));
-      // 1.1–1.45 пресс вниз, рычаг поворачивается
-      let pl=UP;if(t>1.1&&t<1.45)pl=UP-(UP-DOWN)*io(E((t-1.1)/.35));else if(t>=1.45&&t<1.85)pl=DOWN+(UP-DOWN)*io(E((t-1.45)/.4));
-      place(pl);lever.rotation.y=Math.PI*.9*E((t-1.1)/.35)-Math.PI*.9*E((t-1.45)/.4);
-      if(t>=1.45&&!job.thump){job.thump=true;shake=.08;SFX.clap();printPaper(job.title,job.big);job.printed=true;typeM.color.set(0xffffff)}
-      // 1.85–2.6 оттиск уезжает вправо и поднимается (на верёвку)
-      if(t>1.85){const k=io(E((t-1.85)/.75));paper.position.x=4.2*k;paper.position.y=.47+1.6*k;paper.rotation.z=-.4*k;paperM.opacity=1-E((t-2.25)/.35)}
-      if(t>=2.6){const d=job.done;job=null;paper.position.set(0,.47,2.9);paper.rotation.z=0;paperM.opacity=0;d&&d()}}
+    if(!s.vis){if(job)finish();return}  // станок ушёл с экрана — допечатываем сразу
+    tick(dt);r.render(scene,cam)})(performance.now());
+  function tick(dt){T+=dt;
+    if(job){const t=(job.t+=dt),S=(a,b)=>io(E((t-a)/(b-a)));
+      // 1) валик: с краски — два прохода по литерам — обратно
+      if(t<.18){const k=S(0,.18);bp.set(BR0.x*(1-k),BR0.y+(ROLL_Y-BR0.y)*k+Math.sin(k*Math.PI)*.3,BR0.z+(1.62-BR0.z)*k)}
+      else if(t<.7){const k=(t-.18)/.52;bp.set(0,ROLL_Y,1.62+.96*(1-Math.cos(k*Math.PI*2))/2);
+        for(let i=0;i<tops.length;i++){const a=E((bp.z-(Z_OUT+topZ[i]))/.05);if(a>ink[i])ink[i]=a}paintInk();typeM.roughness=.36-.2*E(k*2)}
+      else if(t<.88){const k=S(.7,.88);bp.set(BR0.x*k,ROLL_Y+(BR0.y-ROLL_Y)*k+Math.sin(k*Math.PI)*.3,1.62+(BR0.z-1.62)*k)}
+      else bp.copy(BR0);
+      brayer.position.copy(bp);spin.rotation.x=bp.z/.065;
+      // 2) лист ложится на тимпан
+      if(t>=.88&&!job.p){job.p=1;SFX.flip()}
+      if(t<3.7){paperM.opacity=E((t-.88)/.2);paper.position.y=-.018-.5*(1-S(.88,1.12))}
+      // 3) фрашкет и тимпан закрываются, каретка въезжает, рычаг, пресс
+      const ff=t<3.4?F_OPEN*(1-S(1.12,1.36)):F_OPEN*S(3.45,3.7);
+      const tf=t<3?T_OPEN*(1-S(1.36,1.72)):T_OPEN*S(3.1,3.45);
+      const zb=t<2.6?Z_OUT*(1-S(1.72,2.17)):Z_OUT*S(2.65,3.1);
+      const b=t<2.42?BAR0+(BAR1-BAR0)*S(2.17,2.42):BAR1+(BAR0-BAR1)*S(2.45,2.7);
+      const pl=t<2.42?PL_UP-(PL_UP-PL_DN)*S(2.17,2.42):PL_DN+(PL_UP-PL_DN)*S(2.45,2.7);
+      pose(zb,tf,ff,b,pl);
+      if(t>=2.42&&!job.th){job.th=1;shake=.05;SFX.clap();printPaper(job.title,job.big);for(let i=0;i<ink.length;i++)ink[i]*=.35;paintInk();typeM.roughness=.32}
+      // 4) оттиск снимают и уносят на верёвку
+      if(t>=3.7){if(!job.off){job.off=1;P.attach(paper);pv.copy(paper.position);pq.copy(paper.quaternion);SFX.flip()}
+        const k=S(3.7,4.35);paper.position.set(pv.x+2.6*k,pv.y+1.3*k+Math.sin(k*Math.PI)*.5,pv.z+.6*k);paper.quaternion.copy(pq);paper.rotateY(-.5*k);paper.scale.setScalar(1-.3*k);paperM.opacity=1-E((t-4.05)/.3)}
+      if(t>=4.35)finish()}
     shake*=Math.exp(-dt*12);g.position.y=(Math.random()-.5)*shake;
-    yawT+=drag||still||job?0:dt*.05;yaw+=(yawT-yaw)*(1-Math.exp(-dt*6));g.rotation.y=yaw;
-    key.position.x=-3+mouse.x*4;r.render(scene,cam)})(performance.now());
+    const sway=still||drag?0:Math.sin(T*.35)*.18;yaw+=(yawU-.05+sway-yaw)*(1-Math.exp(-dt*5));g.rotation.y=yaw;
+    key.position.x=-3.5+mouse.x*2}
+  window.__pressSeek=t=>{window.pressAnimate('Мои правила','Честно.',()=>{});for(let k=0;k<t*60;k++)tick(1/60);r.render(scene,cam)};  // для проверки кадров
 }catch(e){console.error('станок',e);window.pressAnimate=null;const st=document.getElementById('pressStage');if(st)st.hidden=true}
 })();
 </script>
