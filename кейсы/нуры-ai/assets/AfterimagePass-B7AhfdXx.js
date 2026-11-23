@@ -1,4 +1,4 @@
-import{_ as e,a as t,c as n,f as r,m as i}from"./stage-B9C9UQ9F.js";import{n as a,t as o}from"./Pass-KgpvOerU.js";import{t as s}from"./CopyShader-CHGAmNbz.js";var c={name:`AfterimageShader`,uniforms:{damp:{value:.96},tOld:{value:null},tNew:{value:null}},vertexShader:`
+import{_ as e,a as t,c as n,f as r,m as i}from"./stage-BcwQhQoD.js";import{n as a,t as o}from"./Pass-De3L-wjV.js";import{t as s}from"./CopyShader-CHGAmNbz.js";var c={name:`AfterimageShader`,uniforms:{damp:{value:.96},tOld:{value:null},tNew:{value:null}},vertexShader:`
 
 		varying vec2 vUv;
 
