@@ -142,20 +142,44 @@
   function init(canvas, state0) {
     const mobile = matchMedia('(max-width: 760px)').matches || matchMedia('(pointer: coarse)').matches;
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, mobile ? 1.5 : 2));
+    // ТЕЛЕФОН (23.11.2026): ~50 точечных ламп + свечение на весь экран = 1 к/с на слабом телефоне.
+    // Облегчённый режим: 1 лампа на шатёр (вместо 15), без пост-эффекта свечения, меньше пикселей, авто-качество.
+    const lite = mobile;
+    if (lite && !THREE.__lite) { // на телефоне все круглые формы вдвое проще (на маленьком экране не видно), ~490 → ~200 тыс. треугольников
+      THREE.__lite = true; const h = (n, d, min) => n === undefined ? undefined : Math.max(min, Math.round(n * d));
+      const Sp = THREE.SphereGeometry, Cy = THREE.CylinderGeometry, To = THREE.TorusGeometry, La = THREE.LatheGeometry;
+      THREE.SphereGeometry = class extends Sp { constructor(r, w = 32, hh = 16, ...a) { super(r, h(w, .5, 5), h(hh, .5, 3), ...a); } };
+      THREE.CylinderGeometry = class extends Cy { constructor(a, b, c, rs = 8, hs = 1, ...x) { super(a, b, c, h(rs, .5, 6), hs, ...x); } };
+      THREE.TorusGeometry = class extends To { constructor(r, tb, rs = 8, ts = 6, ...x) { super(r, tb, h(rs, .5, 4), h(ts, .5, 8), ...x); } };
+      THREE.LatheGeometry = class extends La { constructor(p, s = 12, ...x) { super(p, h(s, .5, 8), ...x); } };
+    }
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: !lite, powerPreference: 'high-performance' });
+    let DPR = Math.min(devicePixelRatio, lite ? 1.25 : 2); renderer.setPixelRatio(DPR);
     renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = .85;
     renderer.shadowMap.enabled = !mobile; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     const scene = new THREE.Scene();
     const pmrem = new THREE.PMREMGenerator(renderer); scene.environment = pmrem.fromScene(new THREE.RoomEnvironment(), .04).texture;
     const cam = new THREE.PerspectiveCamera(60, 1, .05, 900);
     const T = makeTextures(), M = makeMaterials(T);
+    Object.keys(M).forEach(k => M[k].name = k);
+    if (lite) { // телефон: отражения окружения — только металлу; без рельефа ткани; стекло без «лака» (каждый пиксель в разы дешевле)
+      const env = scene.environment; scene.environment = null;
+      Object.keys(M).forEach(k => { let m = M[k];
+        if (m.isMeshPhysicalMaterial) { m = M[k] = new THREE.MeshStandardMaterial({ color: m.color, roughness: m.roughness, metalness: m.metalness, transparent: m.transparent, opacity: m.opacity, side: m.side, depthWrite: m.depthWrite, emissive: m.emissive, emissiveIntensity: m.emissiveIntensity }); }
+        if (m.isMeshStandardMaterial) { m.normalMap = null; if (m.metalness > .5) { m.envMap = env; m.envMapIntensity = .9; } } });
+      // матовое (ткань, ковры, купола, асфальт, еда) — освещение по вершинам (Lambert): пиксель в разы дешевле, на глаз то же
+      'pvc wall carpet deck cloth runnerRed coverRed coverWhite palow salad dograma chorek wood sachak dushek cushion drape backdrop stage sofa asphalt tile facade fruit sweet'.split(' ').forEach(k => { const m = M[k]; if (!m) return;
+        const n = M[k] = new THREE.MeshLambertMaterial({ color: m.color, map: m.map, emissive: m.emissive, emissiveMap: m.emissiveMap, emissiveIntensity: m.emissiveIntensity, side: m.side, transparent: m.transparent, opacity: m.opacity, alphaTest: m.alphaTest, depthWrite: m.depthWrite }); n.name = k; m.dispose(); });
+      // лампочки — просто светящиеся точки
+      ['bulb', 'lamp'].forEach(k => { const m = M[k]; const n = M[k] = new THREE.MeshBasicMaterial({ color: m.emissive.clone().multiplyScalar(Math.min(1.6, m.emissiveIntensity)) }); n.name = k; m.dispose(); });
+    }
     { const sky = new THREE.Mesh(new THREE.SphereGeometry(600, 32, 16), new THREE.ShaderMaterial({ side: THREE.BackSide, depthWrite: false,
         vertexShader: 'varying vec3 p; void main(){ p = normalize(position); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.); }',
         fragmentShader: 'varying vec3 p; void main(){ float y = clamp(p.y,0.,1.); vec3 top = vec3(.004,.007,.02), hor = vec3(.06,.045,.05); gl_FragColor = vec4(mix(hor, top, pow(y,.45)),1.); }' }));
       scene.add(sky); const N = 900, sp = new Float32Array(N * 3); for (let i = 0; i < N; i++) { const a = rnd() * TAU, y = .2 + rnd() * .8, r = Math.sqrt(1 - y * y); sp.set([Math.cos(a) * r * 500, y * 500, Math.sin(a) * r * 500], i * 3); }
       const sg = new THREE.BufferGeometry(); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3)); scene.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xbfc8ff, size: 1.1, sizeAttenuation: false, transparent: true, opacity: .7 }))); }
     scene.add(new THREE.HemisphereLight(lin('#3b4a7a'), lin('#2a1b10'), .1));
+    if (lite) scene.add(new THREE.HemisphereLight(lin('#fff3e0'), lin('#f0dcc0'), .5)); // тёплая заливка вместо ламп под каждым куполом
     const moon = new THREE.DirectionalLight(lin('#8fa3d9'), .2); moon.position.set(-40, 60, -30); scene.add(moon);
 
     let world = null, views = {}, hotspots = [], ledMesh = [], warm = [];
@@ -195,7 +219,7 @@
     function buildTent(g, D) {
       const { A, B, cols, rows } = D, EAVE = 2.7, APEX = 5.6;
       D.EAVE = EAVE; D.APEX = APEX;
-      { const geos = []; const N = 26;
+      { const geos = []; const N = lite ? 14 : 26;
         for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) { const cx = -A + MOD * (i + .5), cz = -B + MOD * (j + .5), pos = [], uv = [], idx = [];
           for (let a = 0; a <= N; a++) for (let b = 0; b <= N; b++) { const u = a / N * 2 - 1, v = b / N * 2 - 1; const d = Math.max(Math.abs(u), Math.abs(v)); pos.push(cx + u * MOD / 2, EAVE + (APEX - EAVE) * Math.pow(1 - d, 2.1), cz + v * MOD / 2); uv.push(a / N, b / N); }
           for (let a = 0; a < N; a++) for (let b = 0; b < N; b++) { const p = a * (N + 1) + b; idx.push(p, p + 1, p + N + 1, p + 1, p + N + 2, p + N + 1); }
@@ -229,18 +253,18 @@
       { const bulbs = [];
         for (let i = 0; i <= cols; i++) for (let s = 0; s <= 20 * rows; s++) bulbs.push(V(-A + MOD * i, EAVE - .2 - .15 * Math.abs(Math.sin(s * Math.PI / 4)), -B + s / (20 * rows) * 2 * B));
         for (let j = 0; j <= rows; j++) for (let s = 0; s <= 20 * cols; s++) bulbs.push(V(-A + s / (20 * cols) * 2 * A, EAVE - .2 - .15 * Math.abs(Math.sin(s * Math.PI / 4)), -B + MOD * j));
-        const im = new THREE.InstancedMesh(new THREE.SphereGeometry(.035, 8, 6), M.bulb, bulbs.length); const d = new THREE.Object3D(); bulbs.forEach((q, i) => { d.position.copy(q); d.updateMatrix(); im.setMatrixAt(i, d.matrix); }); g.add(im); }
+        const im = new THREE.InstancedMesh(lite ? new THREE.IcosahedronGeometry(.035, 1) : new THREE.SphereGeometry(.035, 8, 6), M.bulb, bulbs.length); const d = new THREE.Object3D(); bulbs.forEach((q, i) => { d.position.copy(q); d.updateMatrix(); im.setMatrixAt(i, d.matrix); }); g.add(im); }
       // люстры (Премиум) или светильники-барабаны (Стандарт) под каждым куполом
       const cr = [], cb = [], shades = [];
       for (let i = 0; i < cols; i++) for (let j = 0; j < rows; j++) { const cx = -A + MOD * (i + .5), cz = -B + MOD * (j + .5), y = 3.65;
         g.add(new THREE.Mesh(rod(V(cx, y + .3, cz), V(cx, APEX - .2, cz), .012), M.gold));
         if (state.premium) { [[.62, 0], [.44, .26], [.26, .48]].forEach(([r, dy]) => { const n = Math.round(r * 30); for (let k = 0; k < n; k++) { const a = k / n * TAU; for (let q = 0; q < 3; q++) cr.push(V(cx + Math.cos(a) * r, y + dy - q * .08 - (k % 2) * .04, cz + Math.sin(a) * r)); cb.push(V(cx + Math.cos(a + .1) * r, y + dy + .07, cz + Math.sin(a + .1) * r)); } }); g.add(new THREE.Mesh(new THREE.TorusGeometry(.62, .013, 6, 48).rotateX(Math.PI / 2).translate(cx, y, cz), M.gold)); }
         else shades.push([cx, y, cz]);
-        if ((i + j) % 2 === 0) { const L = new THREE.PointLight(lin('#ffc27a'), .9, 9, 2); L.position.set(cx, y - .3, cz); g.add(L); warm.push(L); } }
+        if (!lite && (i + j) % 2 === 0) { const L = new THREE.PointLight(lin('#ffc27a'), .9, 9, 2); L.position.set(cx, y - .3, cz); g.add(L); warm.push(L); } }
       { const d = new THREE.Object3D();
         if (cr.length) { const cg = new THREE.OctahedronGeometry(.026, 0); cg.scale(1, 1.8, 1); const cm = new THREE.InstancedMesh(cg, M.crystal, cr.length); cr.forEach((p, i) => { d.position.copy(p); d.rotation.set(0, rnd() * TAU, 0); d.updateMatrix(); cm.setMatrixAt(i, d.matrix); }); g.add(cm); const bm = new THREE.InstancedMesh(new THREE.SphereGeometry(.032, 8, 6), M.bulb, cb.length); cb.forEach((p, i) => { d.position.copy(p); d.rotation.set(0, 0, 0); d.updateMatrix(); bm.setMatrixAt(i, d.matrix); }); g.add(bm); }
         if (shades.length) { const sh = new THREE.InstancedMesh(new THREE.CylinderGeometry(.45, .45, .38, 32, 1, true), M.lampShade, shades.length); shades.forEach(([x, y, z], i) => { d.position.set(x, y, z); d.rotation.set(0, 0, 0); d.updateMatrix(); sh.setMatrixAt(i, d.matrix); }); g.add(sh); } }
-      { const L = new THREE.PointLight(lin('#ffcf94'), .9, 2 * A, 2); L.position.set(0, 4.4, 0); if (renderer.shadowMap.enabled) { L.castShadow = true; L.shadow.mapSize.set(1024, 1024); L.shadow.radius = 4; L.shadow.bias = -.002; } g.add(L); warm.push(L); }
+      { const L = new THREE.PointLight(lin('#ffcf94'), lite ? 1.6 : .9, 2 * A, lite ? 1.4 : 2); L.position.set(0, 4.4, 0); if (renderer.shadowMap.enabled) { L.castShadow = true; L.shadow.mapSize.set(1024, 1024); L.shadow.radius = 4; L.shadow.bias = -.002; } g.add(L); warm.push(L); }
       if (state.ac) for (let i = 0; i < cols; i += 2) [-1, 1].forEach(s => { const u = new THREE.Mesh(new THREE.BoxGeometry(.55, 1.85, .38), M.grille); u.position.set(-A + MOD * (i + .5), 1.05, s * (B - .35)); u.castShadow = true; g.add(u); const vent = new THREE.Mesh(new THREE.BoxGeometry(.45, .3, .02), M.dark); vent.position.set(u.position.x, 1.7, s * (B - .56)); g.add(vent); });
       return D;
     }
@@ -398,7 +422,7 @@
       hs.push({ id: 'lowtable', pos: P(c[0], .95, c[1], o3), t: 'Низкий столик', d: 'Сачак на столике: плов, чурек, салаты, фрукты, чай.', tag: 'по меню' });
       return hs; }
 
-    function rebuild() {
+    function rebuild() { needDraw = true;
       if (world) { scene.remove(world.g); world.g.traverse(o => { if (o.geometry) o.geometry.dispose(); }); }
       warm = []; ledMesh = [];
       const g = new THREE.Group(), Ds = split(state.guests), gap = 5, [D1, D2, D3] = Ds;
@@ -412,11 +436,15 @@
       scene.add(g); world = { g, D: D1, D2, D3, Y, spill }; views = makeViews(D1, D2, D3, Y); hotspots = makeHotspots(D1, D2, D3);
     }
 
-    const composer = new THREE.EffectComposer(renderer);
-    composer.addPass(new THREE.RenderPass(scene, cam));
-    const bloom = new THREE.UnrealBloomPass(new THREE.Vector2(256, 256), .42, .45, .9); composer.addPass(bloom);
-    composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
-    renderer.outputEncoding = THREE.LinearEncoding;
+    window.__toy = { renderer, scene, cam }; // для автопроверки скорости
+    let composer = null, bloom = null;
+    if (!lite) {
+      composer = new THREE.EffectComposer(renderer);
+      composer.addPass(new THREE.RenderPass(scene, cam));
+      bloom = new THREE.UnrealBloomPass(new THREE.Vector2(256, 256), .42, .45, .9); composer.addPass(bloom);
+      composer.addPass(new THREE.ShaderPass(THREE.GammaCorrectionShader));
+      renderer.outputEncoding = THREE.LinearEncoding;
+    } else renderer.outputEncoding = THREE.sRGBEncoding;
 
     let cur = { pos: V(0, 0, 0), yaw: 0, pitch: 0, fov: 60 }, from = null, to = null, tT = 1, yawOff = 0, pitchOff = 0, vy = 0, vp = 0, viewName = 'outside', fovOff = 0;
     const dirToYP = (pos, look) => { const d = look.clone().sub(pos); return { yaw: Math.atan2(d.x, d.z), pitch: Math.atan2(d.y, Math.hypot(d.x, d.z)) }; };
@@ -436,14 +464,14 @@
     canvas.addEventListener('touchend', (e) => { if (e.touches.length < 2) pinch = null; });
 
     let W = 1, H = 1;
-    function resize() { const r = canvas.getBoundingClientRect(); W = r.width; H = r.height; renderer.setSize(W, H, false); composer.setSize(W, H); bloom.setSize(W / 2, H / 2); cam.aspect = W / H; cam.updateProjectionMatrix(); }
+    function resize() { const r = canvas.getBoundingClientRect(); W = r.width; H = r.height; renderer.setSize(W, H, false); if (composer) { composer.setSize(W, H); bloom.setSize(W / 2, H / 2); } cam.aspect = W / H; cam.updateProjectionMatrix(); }
     new ResizeObserver(resize).observe(canvas);
 
-    let visible = true, last = performance.now();
+    let lastSig = '', needDraw = true, visible = true, last = performance.now(), fpsN = 0, fpsT = performance.now(), low = 0, q = 2, frame = 0;
     new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible) requestAnimationFrame(loop); }).observe(canvas);
     const look = V(0, 0, 0), proj = V(0, 0, 0);
     function loop(now) {
-      if (!visible) return;
+      if (!visible || window.__toyStop) return;
       const dt = Math.min(.05, (now - last) / 1000); last = now; const t = now / 1000, D = world.D;
       if (tT < 1) { tT = Math.min(1, tT + dt / 1.6); const k = ease(tT);
         if (path && path.length > 2) { const seg = []; let total = 0; for (let i = 1; i < path.length; i++) { const l = path[i].distanceTo(path[i - 1]); seg.push(l); total += l; } let dd = k * total, i = 0; while (i < seg.length - 1 && dd > seg[i]) { dd -= seg[i]; i++; } cur.pos.copy(path[i]).lerp(path[i + 1], seg[i] ? clamp(dd / seg[i]) : 1); } else cur.pos.copy(from.pos).lerp(to.pos, k);
@@ -455,8 +483,14 @@
       cam.fov = clamp(cur.fov + fovOff, 30, 80); cam.updateProjectionMatrix();
       const inT = (Dx) => Math.abs(cam.position.x) < Dx.A * 1.01 && Math.abs(cam.position.z - Dx.oz) < Dx.B * 1.01; const outside = cam.position.y > 6 || !(inT(D) || inT(world.D2) || inT(world.D3));
       const glow = outside ? 1.0 : .14; M.pvc.emissiveIntensity += (glow - M.pvc.emissiveIntensity) * .1; M.wall.emissiveIntensity += (glow * .9 - M.wall.emissiveIntensity) * .1; world.spill.material.opacity = outside ? .5 : 0;
-      if (ledMesh.length) { drawLED(T.ledCanvas, t); T.led.needsUpdate = true; }
-      composer.render();
+      if (ledMesh.length && (!lite || ++frame % 4 === 0)) { drawLED(T.ledCanvas, t); T.led.needsUpdate = true; }
+      // картинка не изменилась (стоим и не трогаем, экрана-LED нет) — не перерисовываем: телефон не греется
+      cam.updateMatrixWorld(); const sig = cam.matrixWorld.elements.map(v => v.toFixed(4)).join() + cam.fov.toFixed(2) + M.pvc.emissiveIntensity.toFixed(3) + W + 'x' + H + DPR;
+      const still = sig === lastSig && !ledMesh.length && !needDraw; lastSig = sig; needDraw = false;
+      if (!still) { if (composer) composer.render(); else renderer.render(scene, cam); }
+      // авто-качество: телефон не тянет 50 к/с две секунды подряд → меньше пикселей (до 2 шагов)
+      fpsN++; if (now - fpsT > 1000) { const f = fpsN * 1000 / (now - fpsT); fpsN = 0; fpsT = now; window.__toyfps = Math.round(f);
+        if (lite && f < 50 && ++low >= 2 && q > 0) { low = 0; q--; DPR = q === 1 ? Math.min(DPR, 1) : Math.min(DPR, .75); renderer.setPixelRatio(DPR); resize(); } else if (f >= 50) low = 0; }
       if (api.onHotspots) api.onHotspots(hotspots.map(h => { proj.copy(h.pos).project(cam); return { id: h.id, x: (proj.x + 1) / 2 * W, y: (1 - proj.y) / 2 * H, vis: proj.z < 1 && Math.abs(proj.x) < 1.05 && Math.abs(proj.y) < 1.05 && !outside, t: h.t, d: h.d, tag: h.tag }; }));
       requestAnimationFrame(loop);
     }
